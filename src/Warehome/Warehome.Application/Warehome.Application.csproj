@@ -10,4 +10,8 @@
       <Folder Include="Services\Implementations\" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Warehome.Domain\Warehome.Domain.csproj" />
+    </ItemGroup>
+
 </Project>
