@@ -72,5 +72,27 @@ public class StorageServiceTests
         Assert.Equal(DeleteStorageStatus.Success, status);
     }
     
+    [Fact]
+    public async Task Delete_NotExists_ReturnsNotFound()
+    {
+        // Arrange
+        string storageName = "test";
+        Mock<IStorageRepository> mockRepo = new Mock<IStorageRepository>();
+        mockRepo.Setup(x => x.DeleteAsync(It.IsAny<Storage>()))
+            .Verifiable(Times.Never);
+        mockRepo.Setup(x => x.GetByPathAsync(It.Is<string>(path => path == storageName)))
+            .ReturnsAsync(value: null)
+            .Verifiable(Times.Once);
+        
+        StorageService service = new StorageService(mockRepo.Object);
+        
+        // Act
+        DeleteStorageStatus status = await service.DeleteStorageAsync(storageName);
+        
+        // Assert
+        mockRepo.Verify();
+        Assert.Equal(DeleteStorageStatus.NotFound, status);
+    }
+    
     
 }
