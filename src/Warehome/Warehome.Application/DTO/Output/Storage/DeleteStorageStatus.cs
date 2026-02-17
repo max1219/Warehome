@@ -3,5 +3,6 @@
 public enum DeleteStorageStatus
 {
     Success,
-    NotEmpty
+    NotEmpty,
+    NotFound,
 }
