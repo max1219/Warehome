@@ -18,7 +18,11 @@ public class StorageService(IStorageRepository storageRepository) : IStorageServ
 
     public async Task<DeleteStorageStatus> DeleteStorageAsync(string path)
     {
-        Storage storage = await _storageRepository.GetByPathAsync(path);
+        Storage? storage = await _storageRepository.GetByPathAsync(path);
+        if (storage == null)
+        {
+            return DeleteStorageStatus.NotFound;
+        }
         await _storageRepository.DeleteAsync(storage);
         return DeleteStorageStatus.Success;
     }
