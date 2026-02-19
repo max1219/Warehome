@@ -1,7 +1,7 @@
 ﻿namespace Warehome.Application.DTO.Input;
 
-public class CreateStorageDto
+public class CreateStorageCategoryDto
 {
     public string Name { get; init; }
-    public string? CategoryPath { get; init; }
+    public string? ParentPath { get; init; }
 }

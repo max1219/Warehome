@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Warehome.Application.Repositories;
+using Warehome.Domain.Entities;
+using Warehome.Infrastructure.Data.Entities;
 using DomainStorage = Warehome.Domain.Entities.Storage;
 using InfrastructureStorage = Warehome.Infrastructure.Data.Entities.Storage;
 
@@ -9,26 +11,48 @@ public class EfStorageRepository(AppDbContext context) : IStorageRepository
 {
     private readonly AppDbContext _context = context;
 
-    public async Task<DomainStorage?> GetByPathAsync(string path)
+    public async Task<DomainStorage?> GetAsync(string name, Category<DomainStorage>? category)
     {
-        InfrastructureStorage? storage =
-            await _context.Storages.FirstOrDefaultAsync(storage => storage.Name == path);
-        return storage is null ? null : new DomainStorage { Name = storage.Name };
+        InfrastructureStorage? storage = await _context.Storages.Where(
+                s => s.Name == name
+                     && (s.CategoryId == null && category == null
+                         || s.CategoryId != null && category != null
+                                                 && s.Category!.Path == category.Path))
+            .FirstOrDefaultAsync();
+
+        return storage == null ? null : new DomainStorage { Name = storage.Name, Category = category };
     }
 
-    public async Task<IEnumerable<DomainStorage>> GetAllAsync()
+    public IAsyncEnumerable<DomainStorage> GetAllByCategoryAsync(Category<DomainStorage>? category)
     {
-        return await _context.Storages.Select(s => new DomainStorage { Name = s.Name }).ToListAsync();
+        return _context.Storages
+            .Where(s => s.CategoryId == null && category == null
+                        || s.CategoryId != null && category != null
+                                                && s.Category!.Path == category.Path)
+            .Select(s => new DomainStorage { Name = s.Name, Category = category })
+            .AsAsyncEnumerable();
     }
 
     public async Task<bool> TryAddAsync(DomainStorage storage)
     {
-        bool isExist = await _context.Storages.AnyAsync(s => s.Name == storage.Name);
+        bool isExist = await _context.Storages.AnyAsync(
+            s => s.Name == storage.Name
+                 && (s.CategoryId == null && storage.Category == null
+                     || s.CategoryId != null && storage.Category != null
+                                             && s.Category!.Path == storage.Category.Path));
         if (isExist)
         {
             return false;
         }
-        await _context.Storages.AddAsync(new InfrastructureStorage { Name = storage.Name });
+
+        StorageCategory? category = null;
+        if (storage.Category is not null)
+        {
+            category = await _context.StorageCategories.Where(
+                c => c.Path == storage.Category.Path).FirstAsync();
+        }
+
+        await _context.Storages.AddAsync(new InfrastructureStorage { Name = storage.Name, Category = category });
         await _context.SaveChangesAsync();
         return true;
     }

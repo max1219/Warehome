@@ -1,8 +1,8 @@
 ﻿namespace Warehome.Application.DTO.Output;
 
-public enum CreateStorageStatus
+public enum CreateStorageCategoryStatus
 {
     Success,
     AlreadyExists,
-    CategoryNotFound
+    ParentNotFound
 }
