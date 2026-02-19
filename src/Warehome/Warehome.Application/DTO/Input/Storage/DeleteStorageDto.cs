@@ -1,6 +1,6 @@
 ﻿namespace Warehome.Application.DTO.Input;
 
-public class CreateStorageDto
+public class DeleteStorageDto
 {
     public string Name { get; init; }
     public string? CategoryPath { get; init; }
