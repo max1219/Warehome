@@ -33,17 +33,8 @@ public class EfStorageRepository(AppDbContext context) : IStorageRepository
             .AsAsyncEnumerable();
     }
 
-    public async Task<bool> TryAddAsync(DomainStorage storage)
+    public async Task AddAsync(DomainStorage storage)
     {
-        bool isExist = await _context.Storages.AnyAsync(
-            s => s.Name == storage.Name
-                 && (s.CategoryId == null && storage.Category == null
-                     || s.CategoryId != null && storage.Category != null
-                                             && s.Category!.Path == storage.Category.Path));
-        if (isExist)
-        {
-            return false;
-        }
 
         StorageCategory? category = null;
         if (storage.Category is not null)
@@ -54,12 +45,10 @@ public class EfStorageRepository(AppDbContext context) : IStorageRepository
 
         await _context.Storages.AddAsync(new InfrastructureStorage { Name = storage.Name, Category = category });
         await _context.SaveChangesAsync();
-        return true;
     }
 
-    public async Task<bool> DeleteAsync(DomainStorage storage)
+    public async Task DeleteAsync(DomainStorage storage)
     {
-        int deleted = await _context.Storages.Where(s => s.Name == storage.Name).ExecuteDeleteAsync();
-        return deleted > 0;
+        await _context.Storages.Where(s => s.Name == storage.Name).ExecuteDeleteAsync();
     }
 }

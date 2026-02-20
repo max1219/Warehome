@@ -15,14 +15,16 @@ public class StorageServiceTests
         // Arrange
         string storageName = "test";
         Mock<IStorageRepository> mockStorageRepo = new Mock<IStorageRepository>();
-        mockStorageRepo.Setup(x => 
-                x.TryAddAsync(It.Is<Storage>(storage => storage.Name == storageName 
-                && storage.Category == null)))
-            .ReturnsAsync(true)
+        mockStorageRepo.Setup(x =>
+                x.AddAsync(It.Is<Storage>(storage => storage.Name == storageName
+                                                     && storage.Category == null)))
+            .Verifiable(Times.Once);
+        mockStorageRepo.Setup(x =>
+                x.GetAsync(storageName, null))
             .Verifiable(Times.Once);
         Mock<ICategoryRepository<Storage>> mockCategoryRepo = new Mock<ICategoryRepository<Storage>>();
-        mockCategoryRepo.Setup(x => 
-            x.CheckExistsAsync(It.IsAny<Category<Storage>>()))
+        mockCategoryRepo.Setup(x =>
+                x.CheckExistsAsync(It.IsAny<Category<Storage>>()))
             .Verifiable(Times.Never);
         StorageService service = new StorageService(mockStorageRepo.Object, mockCategoryRepo.Object);
 
@@ -44,9 +46,11 @@ public class StorageServiceTests
         string categoryPath = "testCategory/t1/t2/t3";
         Mock<IStorageRepository> mockStorageRepo = new Mock<IStorageRepository>();
         mockStorageRepo.Setup(x =>
-                x.TryAddAsync(It.Is<Storage>(
+                x.AddAsync(It.Is<Storage>(
                     storage => storage.Name == storageName && storage.Category!.Path == categoryPath)))
-            .ReturnsAsync(true)
+            .Verifiable(Times.Once);
+        mockStorageRepo.Setup(x =>
+                x.GetAsync(storageName, It.Is<Category<Storage>>(category => category.Path == categoryPath)))
             .Verifiable(Times.Once);
         Mock<ICategoryRepository<Storage>> mockCategoryRepo = new Mock<ICategoryRepository<Storage>>();
         mockCategoryRepo.Setup(x =>
@@ -73,9 +77,12 @@ public class StorageServiceTests
         // Arrange
         string storageName = "test";
         Mock<IStorageRepository> mockStorageRepo = new Mock<IStorageRepository>();
-        mockStorageRepo.Setup(x => 
-                x.TryAddAsync(It.Is<Storage>(storage => storage.Name == storageName)))
-            .ReturnsAsync(false)
+        mockStorageRepo.Setup(x =>
+                x.AddAsync(It.IsAny<Storage>()))
+            .Verifiable(Times.Never);
+        mockStorageRepo.Setup(x =>
+                x.GetAsync(storageName, null))
+            .ReturnsAsync(new Storage { Name = storageName })
             .Verifiable(Times.Once);
         Mock<ICategoryRepository<Storage>> mockCategoryRepo = new Mock<ICategoryRepository<Storage>>();
         StorageService service = new StorageService(mockStorageRepo.Object, mockCategoryRepo.Object);
@@ -97,19 +104,19 @@ public class StorageServiceTests
         string categoryPath = "testCategory/t1/t2/t3";
         Mock<IStorageRepository> mockStorageRepo = new Mock<IStorageRepository>();
         mockStorageRepo.Setup(x =>
-                x.TryAddAsync(It.Is<Storage>(storage => storage.Name == storageName)))
-            .ReturnsAsync(false);
+            x.AddAsync(It.IsAny<Storage>()))
+            .Verifiable(Times.Never);
         Mock<ICategoryRepository<Storage>> mockCategoryRepo = new Mock<ICategoryRepository<Storage>>();
         mockCategoryRepo.Setup(x =>
                 x.CheckExistsAsync(It.Is<Category<Storage>>(category => category.Path == categoryPath)))
             .ReturnsAsync(false);
-        
+
         StorageService service = new StorageService(mockStorageRepo.Object, mockCategoryRepo.Object);
-        
+
         // Act
-        CreateStorageStatus status =  
+        CreateStorageStatus status =
             await service.CreateStorageAsync(new CreateStorageDto { Name = storageName, CategoryPath = categoryPath });
-        
+
         // Assert
         Assert.Equal(CreateStorageStatus.CategoryNotFound, status);
     }
@@ -121,7 +128,6 @@ public class StorageServiceTests
         string storageName = "test";
         Mock<IStorageRepository> mockStorageRepo = new Mock<IStorageRepository>();
         mockStorageRepo.Setup(x => x.DeleteAsync(It.Is<Storage>(storage => storage.Name == storageName)))
-            .ReturnsAsync(true)
             .Verifiable(Times.Once);
         mockStorageRepo.Setup(x => x.GetAsync(It.Is<string>(path => path == storageName), null))
             .ReturnsAsync(new Storage { Name = storageName })
@@ -137,7 +143,7 @@ public class StorageServiceTests
         mockStorageRepo.Verify();
         Assert.Equal(DeleteStorageStatus.Success, status);
     }
-    
+
     [Fact]
     public async Task Delete_NotExists_ReturnsNotFound()
     {
@@ -149,17 +155,16 @@ public class StorageServiceTests
         mockRepo.Setup(x => x.GetAsync(It.Is<string>(path => path == storageName), null))
             .ReturnsAsync(value: null)
             .Verifiable(Times.Once);
-        
+
         Mock<ICategoryRepository<Storage>> mockCategoryRepo = new Mock<ICategoryRepository<Storage>>();
-        
+
         StorageService service = new StorageService(mockRepo.Object, mockCategoryRepo.Object);
-        
+
         // Act
         DeleteStorageStatus status = await service.DeleteStorageAsync(new DeleteStorageDto { Name = storageName });
-        
+
         // Assert
         mockRepo.Verify();
         Assert.Equal(DeleteStorageStatus.NotFound, status);
     }
-    
 }

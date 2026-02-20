@@ -34,11 +34,8 @@ public class EfStorageRepositoryTests
         await _context.Storages.AddAsync(new Infrastructure.Data.Entities.Storage() { Name = storageName1 });
         await _context.SaveChangesAsync();
         
-        // Act
-        bool result = await _repository.TryAddAsync(storage2);
-        
-        // Assert
-        Assert.True(result);
+        // Act & Assert
+        await _repository.AddAsync(storage2);
     }
     
     [Fact]
@@ -52,11 +49,9 @@ public class EfStorageRepositoryTests
         await _context.StorageCategories.AddAsync(new StorageCategory { Path = categoryPath });
         await _context.SaveChangesAsync();
         
-        // Act
-        bool result = await _repository.TryAddAsync(storage);
+        // Act & Assert
+        await _repository.AddAsync(storage);
         
-        // Assert
-        Assert.True(result);
     }    
     
     [Fact]
@@ -71,7 +66,7 @@ public class EfStorageRepositoryTests
         await _context.SaveChangesAsync();
 
         // Act
-        await _repository.TryAddAsync(storage);
+        await _repository.AddAsync(storage);
         Storage? result = await _repository.GetAsync(storageName, category);
         
         // Assert
@@ -82,7 +77,7 @@ public class EfStorageRepositoryTests
     }
 
     [Fact]
-    public async Task Add_TwoInDifferentCategories_Success()
+    public async Task Add_SameNameInDifferentCategories_Success()
     {
         // Arrange
         string storageName = "test";
@@ -97,29 +92,22 @@ public class EfStorageRepositoryTests
         await _context.StorageCategories.AddAsync(new StorageCategory { Path = categoryPath2 });
         await _context.SaveChangesAsync();
 
-        // Act
-        bool result1 = await _repository.TryAddAsync(storage1);
-        bool result2 = await _repository.TryAddAsync(storage2);
-        
-        // Assert
-        Assert.True(result1);
-        Assert.True(result2);
+        // Act & Assert
+        await _repository.AddAsync(storage1);
+        await _repository.AddAsync(storage2);
     }
     
     [Fact]
-    public async Task Add_AlreadyExists_ReturnsFalse()
+    public async Task Add_AlreadyExists_ThrowsException()
     {
         // Arrange
         string storageName = "test";
         Storage storage = new Storage { Name = storageName };
         await _context.Storages.AddAsync(new Infrastructure.Data.Entities.Storage { Name = storageName });
         await _context.SaveChangesAsync();
-
-        // Act
-        bool result = await _repository.TryAddAsync(storage);
         
-        // Assert
-        Assert.False(result);
+        // Act & Assert
+        await Assert.ThrowsAsync<DbUpdateException>(() => _repository.AddAsync(storage));
     }
 
     [Fact]
