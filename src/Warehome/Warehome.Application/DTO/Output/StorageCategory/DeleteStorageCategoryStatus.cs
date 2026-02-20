@@ -3,5 +3,6 @@
 public enum DeleteStorageCategoryStatus
 {
     Success,
-    NotEmpty
+    NotEmpty,
+    NotFound
 }
