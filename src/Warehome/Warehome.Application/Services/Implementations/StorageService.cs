@@ -24,10 +24,16 @@ public class StorageService(
                 return CreateStorageStatus.CategoryNotFound;
             }
         }
+        
+        bool isExists = await _storageRepository.GetAsync(dto.Name, category) != null;
+        if (isExists)
+        {
+            return CreateStorageStatus.AlreadyExists;
+        }
 
-        bool isSuccess = await _storageRepository.TryAddAsync(new Storage { Name = dto.Name, Category = category });
+        await _storageRepository.AddAsync(new Storage { Name = dto.Name, Category = category });
 
-        return isSuccess ? CreateStorageStatus.Success : CreateStorageStatus.AlreadyExists;
+        return CreateStorageStatus.Success;
     }
 
     public async Task<DeleteStorageStatus> DeleteStorageAsync(DeleteStorageDto dto)

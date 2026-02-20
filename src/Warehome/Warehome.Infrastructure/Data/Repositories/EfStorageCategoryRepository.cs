@@ -45,13 +45,8 @@ public class EfStorageCategoryRepository(AppDbContext context) : ICategoryReposi
         }
     }
 
-    public async Task<bool> TryAddAsync(Category<Storage> category, Category<Storage>? parent)
+    public async Task AddAsync(Category<Storage> category, Category<Storage>? parent)
     {
-        bool isExists = await _context.StorageCategories.Where(c => c.Path == category.Path).AnyAsync();
-        if (isExists)
-        {
-            return false;
-        }
 
         int? parentId = null;
         if (parent is not null)
@@ -62,17 +57,10 @@ public class EfStorageCategoryRepository(AppDbContext context) : ICategoryReposi
 
         _context.StorageCategories.Add(new StorageCategory { Path = category.Path, ParentId = parentId });
         await _context.SaveChangesAsync();
-        return true;
     }
 
-    public async Task<bool> DeleteAsync(Category<Storage> category)
+    public async Task DeleteAsync(Category<Storage> category)
     {
-        if (!await _context.StorageCategories.AnyAsync(c => c.Path == category.Path))
-        {
-            return false;
-        }
-
         await _context.StorageCategories.Where(c => c.Path == category.Path).ExecuteDeleteAsync();
-        return true;
     }
 }

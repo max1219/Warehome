@@ -31,16 +31,12 @@ public class EfStorageCategoryRepositoryTests
         string path1 = "path1";
         string path2 = "path2";
         
-        Category<Storage> category1 = new Category<Storage> {Path = path1};
         Category<Storage> category2 = new Category<Storage> {Path = path2};
         await _context.StorageCategories.AddAsync(new StorageCategory { Path = path1 });
         await _context.SaveChangesAsync();
         
-        // Act
-        bool result = await _repository.TryAddAsync(category2, null);
-        
-        // Assert
-        Assert.True(result);
+        // Act & Assert
+        await _repository.AddAsync(category2, null);
     }
 
     [Fact]
@@ -56,11 +52,8 @@ public class EfStorageCategoryRepositoryTests
         await _context.StorageCategories.AddAsync(new StorageCategory { Path = parentPath });
         await _context.SaveChangesAsync();
         
-        // Act
-        bool result = await _repository.TryAddAsync(category, parent);
-        
-        // Assert
-        Assert.True(result);
+        // Act & Assert
+        await _repository.AddAsync(category, parent);
     }
 
     [Fact]
@@ -72,11 +65,8 @@ public class EfStorageCategoryRepositoryTests
         await _context.StorageCategories.AddAsync(new StorageCategory { Path = path });
         await _context.SaveChangesAsync();
         
-        // Act
-        bool result = await _repository.TryAddAsync(category, null);
-        
-        // Assert
-        Assert.False(result);
+        // Act & Assert
+        await Assert.ThrowsAsync<DbUpdateException>(() => _repository.AddAsync(category, null));
     }
 
 }

@@ -23,8 +23,14 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             .OnDelete(DeleteBehavior.Restrict);
         
         modelBuilder.Entity<Storage>()
-            .HasIndex(s => new {s.Name, s.CategoryId})
-            .IsUnique();
+            .HasIndex(s => new { s.Name, s.CategoryId })
+            .IsUnique()
+            .HasFilter("CategoryId IS NOT NULL"); 
+
+        modelBuilder.Entity<Storage>()
+            .HasIndex(s => s.Name)
+            .IsUnique()
+            .HasFilter("CategoryId IS NULL");
         
         modelBuilder.Entity<StorageCategory>()
             .HasIndex(c => c.Path)

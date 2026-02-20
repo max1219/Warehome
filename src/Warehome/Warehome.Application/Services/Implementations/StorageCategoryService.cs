@@ -32,15 +32,26 @@ public class StorageCategoryService(
         {
             category = new Category<Storage> { Path = dto.Name };
         }
+        
+        bool isExists = await _storageCategoryRepository.CheckExistsAsync(category);
+        if (isExists)
+        {
+            return CreateStorageCategoryStatus.AlreadyExists;
+        }
 
-        bool isSuccess = await _storageCategoryRepository.TryAddAsync(category, parentCategory);
+        await _storageCategoryRepository.AddAsync(category, parentCategory);
 
-        return isSuccess ? CreateStorageCategoryStatus.Success : CreateStorageCategoryStatus.AlreadyExists;
+        return CreateStorageCategoryStatus.Success;
     }
 
     public async Task<DeleteStorageCategoryStatus> DeleteStorageCategoryAsync(DeleteStorageCategoryDto dto)
     {
         Category<Storage> category = new Category<Storage> { Path = dto.Path };
+
+        if (!await _storageCategoryRepository.CheckExistsAsync(category))
+        {
+            return DeleteStorageCategoryStatus.NotFound;
+        }
 
         IAsyncEnumerable<Category<Storage>> childCategories =
             _storageCategoryRepository.GetAllByParentAsync(category, false);
