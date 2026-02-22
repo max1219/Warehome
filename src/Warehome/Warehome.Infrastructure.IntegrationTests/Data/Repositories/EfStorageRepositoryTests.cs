@@ -1,5 +1,6 @@
 ﻿using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Warehome.Domain.Entities;
 using Warehome.Infrastructure.Data;
 using Warehome.Infrastructure.Data.Entities;
@@ -124,5 +125,64 @@ public class EfStorageRepositoryTests
         
         // Assert
         Assert.Null(actual);
+    }
+    
+    [Fact]
+    public async Task GetAllByCategory_WithCategory()
+    {
+        // Arrange
+        string categoryPath = "categoryPath";
+        string wrongCategoryPath = "wrongCategoryPath";
+        string[] storageNames = ["child1", "child2", "child3"];
+        string[] wrongStorageNames = ["wrong1", "wrong2"];
+
+        EntityEntry<StorageCategory> category =
+            await _context.StorageCategories.AddAsync(new StorageCategory { Path = categoryPath });
+        EntityEntry<StorageCategory> wrongCategory =
+            await _context.StorageCategories.AddAsync(new StorageCategory { Path = wrongCategoryPath });
+        await _context.SaveChangesAsync();
+        await _context.Storages.AddRangeAsync(storageNames.Select(
+            name => new Infrastructure.Data.Entities.Storage { Name = name, CategoryId = category.Entity.Id }));
+        await _context.Storages.AddRangeAsync(wrongStorageNames.Select(
+            name => new Infrastructure.Data.Entities.Storage { Name = name, CategoryId = wrongCategory.Entity.Id }));
+        await _context.SaveChangesAsync();
+
+        // Act
+        IAsyncEnumerable<Storage> result =
+            _repository.GetAllByCategoryAsync(new Category<Storage> { Path = categoryPath });
+
+        // Assert
+        Assert.Equal(
+            storageNames.Order(),
+            result.Select(storage => storage.Name).Order()
+        );
+    }    
+    
+    [Fact]
+    public async Task GetAllByCategory_WithOutCategory()
+    {
+        // Arrange
+        string wrongCategoryPath = "wrongCategoryPath";
+        string[] storageNames = ["child1", "child2", "child3"];
+        string[] wrongStorageNames = ["wrong1", "wrong2"];
+
+        EntityEntry<StorageCategory> wrongCategory =
+            await _context.StorageCategories.AddAsync(new StorageCategory { Path = wrongCategoryPath });
+        await _context.SaveChangesAsync();
+        await _context.Storages.AddRangeAsync(storageNames.Select(
+            name => new Infrastructure.Data.Entities.Storage { Name = name }));
+        await _context.Storages.AddRangeAsync(wrongStorageNames.Select(
+            name => new Infrastructure.Data.Entities.Storage { Name = name, CategoryId = wrongCategory.Entity.Id }));
+        await _context.SaveChangesAsync();
+
+        // Act
+        IAsyncEnumerable<Storage> result =
+            _repository.GetAllByCategoryAsync(null);
+
+        // Assert
+        Assert.Equal(
+            storageNames.Order(),
+            result.Select(storage => storage.Name).Order()
+        );
     }
 }
