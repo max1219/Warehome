@@ -16,6 +16,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Warehome.Infrastructure", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Warehome.Infrastructure.IntegrationTests", "Warehome.Infrastructure.IntegrationTests\Warehome.Infrastructure.IntegrationTests.csproj", "{239E0603-E8E8-47F1-B4EB-C80243DE5E48}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Warehome.Web", "Warehome.Web\Warehome.Web.csproj", "{1EE57D0C-EE02-43B7-95EE-77B88E49C6EF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -46,6 +48,10 @@ Global
 		{239E0603-E8E8-47F1-B4EB-C80243DE5E48}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{239E0603-E8E8-47F1-B4EB-C80243DE5E48}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{239E0603-E8E8-47F1-B4EB-C80243DE5E48}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1EE57D0C-EE02-43B7-95EE-77B88E49C6EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1EE57D0C-EE02-43B7-95EE-77B88E49C6EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1EE57D0C-EE02-43B7-95EE-77B88E49C6EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1EE57D0C-EE02-43B7-95EE-77B88E49C6EF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{31916AA2-DBE3-4E59-BE7E-686A3FD9B999} = {D9E7A07E-BCA8-4BE6-A206-891685C4DB89}
@@ -53,5 +59,6 @@ Global
 		{0F5FC860-B802-4C3D-BEDA-1F5A99D4548E} = {0D5CAD61-B4D8-48F9-A025-7583A4EB11C7}
 		{CF8E0D93-2B90-4170-9E9E-5469D7FF7F6F} = {D9E7A07E-BCA8-4BE6-A206-891685C4DB89}
 		{239E0603-E8E8-47F1-B4EB-C80243DE5E48} = {0D5CAD61-B4D8-48F9-A025-7583A4EB11C7}
+		{1EE57D0C-EE02-43B7-95EE-77B88E49C6EF} = {D9E7A07E-BCA8-4BE6-A206-891685C4DB89}
 	EndGlobalSection
 EndGlobal
