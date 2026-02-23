@@ -12,6 +12,8 @@ WebApplication app = builder.Build();
 
 app.UseRouting();
 app.MapControllers();
+app.UseStaticFiles();
+app.MapFallbackToFile("index.html");
 app.UseSwagger();
 app.UseSwaggerUI();
 
