@@ -16,7 +16,7 @@ public class StorageCategoryServiceTests
         string name = "test";
         Mock<ICategoryRepository<Storage>> mockCategoryRepository = new Mock<ICategoryRepository<Storage>>();
         mockCategoryRepository.Setup(x =>
-            x.CheckExistsAsync(It.Is<Category<Storage>>(category => category.Path == name)))
+                x.CheckExistsAsync(It.Is<Category<Storage>>(category => category.Path == name)))
             .ReturnsAsync(false)
             .Verifiable(Times.Once);
         mockCategoryRepository.Setup(x =>
@@ -51,7 +51,7 @@ public class StorageCategoryServiceTests
             .Verifiable(Times.Once);
 
         mockCategoryRepository.Setup(x =>
-            x.CheckExistsAsync(It.Is<Category<Storage>>(category => category.Path == path)))
+                x.CheckExistsAsync(It.Is<Category<Storage>>(category => category.Path == path)))
             .ReturnsAsync(false)
             .Verifiable(Times.Once);
         mockCategoryRepository.Setup(x =>
@@ -80,7 +80,7 @@ public class StorageCategoryServiceTests
         string name = "test";
         Mock<ICategoryRepository<Storage>> mockCategoryRepository = new Mock<ICategoryRepository<Storage>>();
         mockCategoryRepository.Setup(x =>
-            x.CheckExistsAsync(It.Is<Category<Storage>>(category => category.Path == name)))
+                x.CheckExistsAsync(It.Is<Category<Storage>>(category => category.Path == name)))
             .ReturnsAsync(true)
             .Verifiable(Times.Once);
         mockCategoryRepository.Setup(x =>
@@ -137,12 +137,12 @@ public class StorageCategoryServiceTests
                 x.CheckExistsAsync(It.Is<Category<Storage>>(category => category.Path == path)))
             .ReturnsAsync(true);
         mockCategoryRepository.Setup(x =>
-            x.GetAllByParentAsync(It.Is<Category<Storage>>(category => category.Path == path), false))
+                x.GetAllByParentAsync(It.Is<Category<Storage>>(category => category.Path == path), false))
             .Returns(Array.Empty<Category<Storage>>().ToAsyncEnumerable());
         mockCategoryRepository.Setup(x =>
                 x.DeleteAsync(It.Is<Category<Storage>>(category => category.Path == path)))
             .Verifiable(Times.Once);
-        
+
         Mock<IStorageRepository> mockStorageRepo = new Mock<IStorageRepository>();
         mockStorageRepo.Setup(x =>
                 x.GetAllByCategoryAsync(It.Is<Category<Storage>>(category => category.Path == path)))
@@ -245,7 +245,7 @@ public class StorageCategoryServiceTests
         mockCategoryRepository.Setup(x =>
                 x.DeleteAsync(It.IsAny<Category<Storage>>()))
             .Verifiable(Times.Never);
-        
+
         Mock<IStorageRepository> mockStorageRepo = new Mock<IStorageRepository>();
         mockStorageRepo.Setup(x =>
                 x.GetAllByCategoryAsync(It.IsAny<Category<Storage>>()))
@@ -261,5 +261,91 @@ public class StorageCategoryServiceTests
         mockCategoryRepository.Verify();
         mockStorageRepo.Verify();
         Assert.Equal(DeleteStorageCategoryStatus.NotFound, status);
+    }
+
+    [Fact]
+    public async Task GetTree_ReturnsCorrectTree()
+    {
+        // Arrange
+
+        /*
+        c1 (категория)
+        ├── c1c1 (пустая категория)
+        ├── c1c2 (категория)
+        │   └── [storage] c1c2Storage1
+        │   └── [storage] c1c2Storage2
+        │   └── [storage] c1c2Storage3
+        └── [storage] r1Storage1
+
+        c2 (категория)
+        ├── c2c1 (пустая категория)
+
+        [storage] rootStorage1
+        [storage] rootStorage2
+        */
+
+        string[] rootCategoryPaths = ["c1", "c2"];
+        string[] rootStorageNames = ["rootStorage1", "rootStorage2"];
+        string[] cat1ChildNames = ["c1c1", "c1c2"];
+        string[] cat1StorageNames = ["r1Storage1"];
+        string[] cat2ChildNames = ["c2c1"];
+        string[] cat1Cat2StorageNames = ["c1c2Storage1", "c1c2Storage2", "c1c2Storage3"];
+
+        Mock<ICategoryRepository<Storage>> mockCategoryRepository = new Mock<ICategoryRepository<Storage>>();
+        mockCategoryRepository.Setup(x =>
+                x.GetAllByParentAsync(It.IsAny<Category<Storage>?>(), false))
+            .Returns(Array.Empty<Category<Storage>>().ToAsyncEnumerable());
+        mockCategoryRepository.Setup(x =>
+                x.GetAllByParentAsync(null, false))
+            .Returns(rootCategoryPaths.Select(path => new Category<Storage> { Path = path }).ToAsyncEnumerable());
+        mockCategoryRepository.Setup(x =>
+                x.GetAllByParentAsync(It.Is<Category<Storage>?>(c => c != null && c.Path == rootCategoryPaths[0]),
+                    false))
+            .Returns(cat1ChildNames.Select(path => new Category<Storage> { Path = path }).ToAsyncEnumerable());
+        mockCategoryRepository.Setup(x =>
+                x.GetAllByParentAsync(It.Is<Category<Storage>?>(c => c != null && c.Path == rootCategoryPaths[1]),
+                    false))
+            .Returns(cat2ChildNames.Select(path => new Category<Storage> { Path = path }).ToAsyncEnumerable());
+
+
+        Mock<IStorageRepository> mockStorageRepo = new Mock<IStorageRepository>();
+        mockStorageRepo.Setup(x =>
+            x.GetAllByCategoryAsync(It.IsAny<Category<Storage>?>()))
+            .Returns(Array.Empty<Storage>().ToAsyncEnumerable());
+        mockStorageRepo.Setup(x =>
+                x.GetAllByCategoryAsync(null))
+            .Returns(rootStorageNames.Select(name => new Storage { Name = name }).ToAsyncEnumerable());
+        mockStorageRepo.Setup(x =>
+                x.GetAllByCategoryAsync(It.Is<Category<Storage>?>(c => c != null && c.Path == rootCategoryPaths[0])))
+            .Returns(cat1StorageNames.Select(name => new Storage { Name = name }).ToAsyncEnumerable());
+        mockStorageRepo.Setup(x =>
+                x.GetAllByCategoryAsync(It.Is<Category<Storage>?>(
+                    c => c != null 
+                         && c.Path == $"{rootCategoryPaths[0]}/{cat1ChildNames[1]}")))
+            .Returns(cat1Cat2StorageNames.Select(name => new Storage { Name = name }).ToAsyncEnumerable());
+
+        StorageCategoryService service =
+            new StorageCategoryService(mockCategoryRepository.Object, mockStorageRepo.Object);
+
+        // Act
+        StorageCategoryTreeResponse tree = await service.GetTreeAsync();
+
+        // Assert
+        Assert.Equal(rootCategoryPaths.Length, tree.ChildrenCount);
+        StorageCategoryTreeResponse c1 = tree.Children.Single(c => c.Name == rootCategoryPaths[0]);
+        Assert.Equal(cat1StorageNames, c1.StorageNames);
+        Assert.Equal(cat1ChildNames, c1.Children.Select(c => c.Name));
+        StorageCategoryTreeResponse c1C2 = c1.Children.Single(c => c.Name == cat1ChildNames[1]);
+        Assert.Equal(cat1Cat2StorageNames, c1C2.StorageNames);
+        Assert.Empty(c1C2.Children);
+        StorageCategoryTreeResponse c1C1 = c1.Children.Single(c => c.Name == cat1ChildNames[0]);
+        Assert.Empty(c1C1.StorageNames);
+        Assert.Empty(c1C1.Children);
+        StorageCategoryTreeResponse c2 = tree.Children.Single(c => c.Name == rootCategoryPaths[1]);
+        Assert.Empty(c2.StorageNames);
+        Assert.Equal(cat2ChildNames, c2.Children.Select(c => c.Name));
+        StorageCategoryTreeResponse c2C1 = c2.Children.Single(c => c.Name == cat2ChildNames[0]);
+        Assert.Empty(c2C1.StorageNames);
+        Assert.Empty(c2C1.Children);
     }
 }

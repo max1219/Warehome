@@ -13,6 +13,44 @@ public class StorageCategoryService(
     private readonly IStorageRepository _storageRepository = storageRepository;
     private readonly ICategoryRepository<Storage> _storageCategoryRepository = storageCategoryRepository;
 
+    public async Task<StorageCategoryTreeResponse> GetTreeAsync()
+    {
+        StorageCategoryTreeResponse root = new StorageCategoryTreeResponse { Name = string.Empty };
+        Stack<StorageCategoryTreeResponse> stack = new Stack<StorageCategoryTreeResponse>([root]);
+        Stack<string> paths = new Stack<string>([""]);
+
+        while (stack.Count > 0)
+        {
+            StorageCategoryTreeResponse current = stack.Pop();
+            string path = paths.Pop();
+            Category<Storage>? category = null;
+            if (path != "")
+            {
+                category = new Category<Storage> {Path = path};
+            }
+
+            IAsyncEnumerable<Storage> storagesAsync = _storageRepository.GetAllByCategoryAsync(category);
+            List<Storage> storages = await storagesAsync.ToListAsync();
+            current.StoragesCount = storages.Count;
+            current.StorageNames = storages.Select(x => x.Name);
+
+            IAsyncEnumerable<Category<Storage>> categoriesAsync =
+                _storageCategoryRepository.GetAllByParentAsync(category, false);
+            List<Category<Storage>> categories = await categoriesAsync.ToListAsync();
+            current.ChildrenCount = categories.Count;
+            List<StorageCategoryTreeResponse> childrenNodes = new List<StorageCategoryTreeResponse>(categories.Count);
+            current.Children = childrenNodes;
+            foreach (Category<Storage> child in categories)
+            {
+                childrenNodes.Add(new StorageCategoryTreeResponse { Name = child.Name });
+                stack.Push(childrenNodes.Last());
+                paths.Push(path == "" ? child.Name : $"{path}/{child.Name}");
+            }
+        }
+        
+        return root;
+    }
+
     public async Task<CreateStorageCategoryStatus> CreateStorageCategoryAsync(CreateStorageCategoryDto dto)
     {
         Category<Storage> category;
@@ -20,8 +58,8 @@ public class StorageCategoryService(
 
         if (dto.ParentPath is not null)
         {
-            parentCategory = new Category<Storage> {Path = dto.ParentPath};
-            if (! await _storageCategoryRepository.CheckExistsAsync(parentCategory))
+            parentCategory = new Category<Storage> { Path = dto.ParentPath };
+            if (!await _storageCategoryRepository.CheckExistsAsync(parentCategory))
             {
                 return CreateStorageCategoryStatus.ParentNotFound;
             }
@@ -32,7 +70,7 @@ public class StorageCategoryService(
         {
             category = new Category<Storage> { Path = dto.Name };
         }
-        
+
         bool isExists = await _storageCategoryRepository.CheckExistsAsync(category);
         if (isExists)
         {
