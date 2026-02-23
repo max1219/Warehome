@@ -30,7 +30,7 @@ public class StorageServiceTests
 
         // Act
         CreateStorageStatus status =
-            await service.CreateStorageAsync(new CreateStorageDto { Name = storageName });
+            await service.CreateStorageAsync(new CreateStorageCommand { Name = storageName });
 
         // Assert
         mockStorageRepo.Verify();
@@ -62,7 +62,7 @@ public class StorageServiceTests
 
         // Act
         CreateStorageStatus status =
-            await service.CreateStorageAsync(new CreateStorageDto
+            await service.CreateStorageAsync(new CreateStorageCommand
                 { Name = storageName, CategoryPath = categoryPath });
 
         // Assert
@@ -89,7 +89,7 @@ public class StorageServiceTests
 
         // Act
         CreateStorageStatus status =
-            await service.CreateStorageAsync(new CreateStorageDto { Name = storageName });
+            await service.CreateStorageAsync(new CreateStorageCommand { Name = storageName });
 
         // Assert
         mockStorageRepo.Verify();
@@ -115,7 +115,7 @@ public class StorageServiceTests
 
         // Act
         CreateStorageStatus status =
-            await service.CreateStorageAsync(new CreateStorageDto { Name = storageName, CategoryPath = categoryPath });
+            await service.CreateStorageAsync(new CreateStorageCommand { Name = storageName, CategoryPath = categoryPath });
 
         // Assert
         Assert.Equal(CreateStorageStatus.CategoryNotFound, status);
@@ -137,7 +137,7 @@ public class StorageServiceTests
         StorageService service = new StorageService(mockStorageRepo.Object, mockCategoryRepo.Object);
 
         // Act
-        DeleteStorageStatus status = await service.DeleteStorageAsync(new DeleteStorageDto { Name = storageName });
+        DeleteStorageStatus status = await service.DeleteStorageAsync(new DeleteStorageCommand { Name = storageName });
 
         // Assert
         mockStorageRepo.Verify();
@@ -161,7 +161,7 @@ public class StorageServiceTests
         StorageService service = new StorageService(mockRepo.Object, mockCategoryRepo.Object);
 
         // Act
-        DeleteStorageStatus status = await service.DeleteStorageAsync(new DeleteStorageDto { Name = storageName });
+        DeleteStorageStatus status = await service.DeleteStorageAsync(new DeleteStorageCommand { Name = storageName });
 
         // Assert
         mockRepo.Verify();

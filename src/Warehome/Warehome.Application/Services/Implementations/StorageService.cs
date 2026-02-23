@@ -13,42 +13,42 @@ public class StorageService(
     private readonly IStorageRepository _storageRepository = storageRepository;
     private readonly ICategoryRepository<Storage> _storageCategoryRepository = storageCategoryRepository;
 
-    public async Task<CreateStorageStatus> CreateStorageAsync(CreateStorageDto dto)
+    public async Task<CreateStorageStatus> CreateStorageAsync(CreateStorageCommand command)
     {
         Category<Storage>? category = null;
-        if (dto.CategoryPath is not null)
+        if (command.CategoryPath is not null)
         {
-            category = new Category<Storage> { Path = dto.CategoryPath };
+            category = new Category<Storage> { Path = command.CategoryPath };
             if (! await _storageCategoryRepository.CheckExistsAsync(category))
             {
                 return CreateStorageStatus.CategoryNotFound;
             }
         }
         
-        bool isExists = await _storageRepository.GetAsync(dto.Name, category) != null;
+        bool isExists = await _storageRepository.GetAsync(command.Name, category) != null;
         if (isExists)
         {
             return CreateStorageStatus.AlreadyExists;
         }
 
-        await _storageRepository.AddAsync(new Storage { Name = dto.Name, Category = category });
+        await _storageRepository.AddAsync(new Storage { Name = command.Name, Category = category });
 
         return CreateStorageStatus.Success;
     }
 
-    public async Task<DeleteStorageStatus> DeleteStorageAsync(DeleteStorageDto dto)
+    public async Task<DeleteStorageStatus> DeleteStorageAsync(DeleteStorageCommand command)
     {
         Category<Storage>? category = null;
-        if (dto.CategoryPath is not null)
+        if (command.CategoryPath is not null)
         {
-            category = new Category<Storage> { Path = dto.CategoryPath };
+            category = new Category<Storage> { Path = command.CategoryPath };
             if (! await _storageCategoryRepository.CheckExistsAsync(category))
             {
                 return DeleteStorageStatus.NotFound;
             }
         }
         
-        Storage? storage = await _storageRepository.GetAsync(dto.Name, category);
+        Storage? storage = await _storageRepository.GetAsync(command.Name, category);
         if (storage == null)
         {
             return DeleteStorageStatus.NotFound;

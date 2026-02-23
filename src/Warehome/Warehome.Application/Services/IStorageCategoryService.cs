@@ -5,7 +5,7 @@ namespace Warehome.Application.Services;
 
 public interface IStorageCategoryService
 {
-    Task<StorageCategoryTreeResponse> GetTreeAsync();
-    Task<CreateStorageCategoryStatus> CreateStorageCategoryAsync(CreateStorageCategoryDto dto);
-    Task<DeleteStorageCategoryStatus> DeleteStorageCategoryAsync(DeleteStorageCategoryDto dto);
+    Task<GetStorageCategoryTreeResult> GetTreeAsync();
+    Task<CreateStorageCategoryStatus> CreateStorageCategoryAsync(CreateStorageCategoryCommand command);
+    Task<DeleteStorageCategoryStatus> DeleteStorageCategoryAsync(DeleteStorageCategoryCommand command);
 }
