@@ -1,0 +1,89 @@
+﻿/* Общий стиль */
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background: #1e1e1e;
+    color: #e0e0e0;
+}
+
+/* Путь */
+#path {
+    font-weight: bold;
+    background: #2b2b2b;
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid #444;
+    display: inline-block;
+    color: #fff;
+}
+
+/* Кнопки */
+button {
+    margin-right: 10px;
+    padding: 6px 12px;
+    cursor: pointer;
+    background: #3a3a3a;
+    color: #fff;
+    border: 1px solid #555;
+    border-radius: 4px;
+}
+
+button:hover {
+    background: #505050;
+}
+
+#btnUp:disabled {
+    opacity: 0.3;
+    cursor: default;
+}
+
+/* Списки */
+ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+/* Плашки категорий и складов */
+li {
+    background: #2b2b2b;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    border-radius: 6px;
+    border: 1px solid #444;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer; /* ВАЖНО: кликабельна вся плашка */
+    transition: background 0.15s;
+}
+
+li:hover {
+    background: #3a3a3a;
+}
+
+/* Текст внутри плашки */
+li span {
+    font-size: 16px;
+    pointer-events: none; /* чтобы клик шел на li */
+}
+
+/* Кнопка удаления */
+li button {
+    background: #b30000;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+}
+
+li button:hover {
+    background: #e60000;
+}
+
+/* Заголовки */
+h3 {
+    margin-top: 25px;
+    margin-bottom: 10px;
+    color: #fff;
+}
