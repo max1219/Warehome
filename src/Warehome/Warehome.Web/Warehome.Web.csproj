@@ -8,6 +8,19 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Warehome.Application\Warehome.Application.csproj" />
+      <ProjectReference Include="..\Warehome.Infrastructure\Warehome.Infrastructure.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.13">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.4" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="AppData\" />
     </ItemGroup>
 
 </Project>
