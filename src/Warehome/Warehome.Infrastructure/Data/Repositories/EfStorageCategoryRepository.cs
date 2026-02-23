@@ -18,17 +18,23 @@ public class EfStorageCategoryRepository(AppDbContext context) : ICategoryReposi
     }
 
     public async IAsyncEnumerable<Category<Storage>> GetAllByParentAsync(
-        Category<Storage> parent,
+        Category<Storage>? parent,
         bool recursive)
     {
-        StorageCategory? parentData = await _context.StorageCategories
-            .FirstOrDefaultAsync(c => c.Path == parent.Path);
+        int? parentId = null;
+        if (parent is not null)
+        {
+            StorageCategory? parentData = await _context.StorageCategories
+                .FirstOrDefaultAsync(c => c.Path == parent.Path);
 
-        if (parentData == null)
-            yield break;
+            if (parentData == null)
+                yield break;
+            
+            parentId = parentData.Id;
+        }
 
         IAsyncEnumerable<StorageCategory> categories = _context.StorageCategories
-            .Where(c => c.ParentId == parentData.Id)
+            .Where(c => c.ParentId == parentId)
             .AsAsyncEnumerable();
 
         await foreach (StorageCategory category in categories)
