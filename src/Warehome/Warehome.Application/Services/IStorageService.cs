@@ -6,7 +6,7 @@ namespace Warehome.Application.Services;
 
 public interface IStorageService
 {
-    Task<CreateStorageStatus> CreateStorageAsync(CreateStorageDto dto);
-    Task<DeleteStorageStatus> DeleteStorageAsync(DeleteStorageDto dto);
+    Task<CreateStorageStatus> CreateStorageAsync(CreateStorageCommand command);
+    Task<DeleteStorageStatus> DeleteStorageAsync(DeleteStorageCommand command);
     
 }

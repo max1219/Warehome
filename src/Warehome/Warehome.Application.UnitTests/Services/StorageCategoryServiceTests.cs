@@ -29,7 +29,7 @@ public class StorageCategoryServiceTests
 
         // Act
         CreateStorageCategoryStatus status =
-            await service.CreateStorageCategoryAsync(new CreateStorageCategoryDto { Name = name });
+            await service.CreateStorageCategoryAsync(new CreateStorageCategoryCommand { Name = name });
 
         // Assert
         mockCategoryRepository.Verify();
@@ -65,7 +65,7 @@ public class StorageCategoryServiceTests
 
         // Act
         CreateStorageCategoryStatus status =
-            await service.CreateStorageCategoryAsync(new CreateStorageCategoryDto
+            await service.CreateStorageCategoryAsync(new CreateStorageCategoryCommand
                 { Name = name, ParentPath = parentPath });
 
         // Assert
@@ -93,7 +93,7 @@ public class StorageCategoryServiceTests
 
         // Act
         CreateStorageCategoryStatus status =
-            await service.CreateStorageCategoryAsync(new CreateStorageCategoryDto { Name = name });
+            await service.CreateStorageCategoryAsync(new CreateStorageCategoryCommand { Name = name });
 
         // Assert
         mockCategoryRepository.Verify();
@@ -120,7 +120,7 @@ public class StorageCategoryServiceTests
 
         // Act
         CreateStorageCategoryStatus status = await service.CreateStorageCategoryAsync(
-            new CreateStorageCategoryDto { Name = path, ParentPath = parentPath });
+            new CreateStorageCategoryCommand { Name = path, ParentPath = parentPath });
 
         // Assert
         mockCategoryRepository.Verify();
@@ -152,7 +152,7 @@ public class StorageCategoryServiceTests
 
         // Act
         DeleteStorageCategoryStatus status = await service.DeleteStorageCategoryAsync(
-            new DeleteStorageCategoryDto { Path = path });
+            new DeleteStorageCategoryCommand { Path = path });
 
         // Assert
         mockCategoryRepository.Verify();
@@ -187,7 +187,7 @@ public class StorageCategoryServiceTests
 
         // Act
         DeleteStorageCategoryStatus status = await service.DeleteStorageCategoryAsync(
-            new DeleteStorageCategoryDto { Path = path });
+            new DeleteStorageCategoryCommand { Path = path });
 
         // Assert
         mockCategoryRepository.Verify();
@@ -223,7 +223,7 @@ public class StorageCategoryServiceTests
 
         // Act
         DeleteStorageCategoryStatus status = await service.DeleteStorageCategoryAsync(
-            new DeleteStorageCategoryDto { Path = path });
+            new DeleteStorageCategoryCommand { Path = path });
 
         // Assert
         mockCategoryRepository.Verify();
@@ -255,7 +255,7 @@ public class StorageCategoryServiceTests
 
         // Act
         DeleteStorageCategoryStatus status = await service.DeleteStorageCategoryAsync(
-            new DeleteStorageCategoryDto { Path = path });
+            new DeleteStorageCategoryCommand { Path = path });
 
         // Assert
         mockCategoryRepository.Verify();
@@ -328,23 +328,23 @@ public class StorageCategoryServiceTests
             new StorageCategoryService(mockCategoryRepository.Object, mockStorageRepo.Object);
 
         // Act
-        StorageCategoryTreeResponse tree = await service.GetTreeAsync();
+        GetStorageCategoryTreeResult tree = await service.GetTreeAsync();
 
         // Assert
-        Assert.Equal(rootCategoryPaths.Length, tree.ChildrenCount);
-        StorageCategoryTreeResponse c1 = tree.Children.Single(c => c.Name == rootCategoryPaths[0]);
+        Assert.Equal(rootCategoryPaths.Length, tree.Children.Count);
+        GetStorageCategoryTreeResult c1 = tree.Children.Single(c => c.Name == rootCategoryPaths[0]);
         Assert.Equal(cat1StorageNames, c1.StorageNames);
         Assert.Equal(cat1ChildNames, c1.Children.Select(c => c.Name));
-        StorageCategoryTreeResponse c1C2 = c1.Children.Single(c => c.Name == cat1ChildNames[1]);
+        GetStorageCategoryTreeResult c1C2 = c1.Children.Single(c => c.Name == cat1ChildNames[1]);
         Assert.Equal(cat1Cat2StorageNames, c1C2.StorageNames);
         Assert.Empty(c1C2.Children);
-        StorageCategoryTreeResponse c1C1 = c1.Children.Single(c => c.Name == cat1ChildNames[0]);
+        GetStorageCategoryTreeResult c1C1 = c1.Children.Single(c => c.Name == cat1ChildNames[0]);
         Assert.Empty(c1C1.StorageNames);
         Assert.Empty(c1C1.Children);
-        StorageCategoryTreeResponse c2 = tree.Children.Single(c => c.Name == rootCategoryPaths[1]);
+        GetStorageCategoryTreeResult c2 = tree.Children.Single(c => c.Name == rootCategoryPaths[1]);
         Assert.Empty(c2.StorageNames);
         Assert.Equal(cat2ChildNames, c2.Children.Select(c => c.Name));
-        StorageCategoryTreeResponse c2C1 = c2.Children.Single(c => c.Name == cat2ChildNames[0]);
+        GetStorageCategoryTreeResult c2C1 = c2.Children.Single(c => c.Name == cat2ChildNames[0]);
         Assert.Empty(c2C1.StorageNames);
         Assert.Empty(c2C1.Children);
     }
