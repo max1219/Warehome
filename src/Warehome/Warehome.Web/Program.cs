@@ -1,6 +1,18 @@
-var builder = WebApplication.CreateBuilder(args);
-var app = builder.Build();
+using Warehome.Application;
+using Warehome.Infrastructure;
+using Warehome.Web;
 
-app.MapGet("/", () => "Hello World!");
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddApplication()
+    .AddInfrastructure(builder.Configuration)
+    .AddWeb();
+
+WebApplication app = builder.Build();
+
+app.UseRouting();
+app.MapControllers();
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.Run();
