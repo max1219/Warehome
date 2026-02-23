@@ -2,8 +2,8 @@
 using Warehome.Application.DTO.Input;
 using Warehome.Application.DTO.Output;
 using Warehome.Application.Services;
-using Warehome.Web.Dto.Input;
-using Warehome.Web.Dto.Output;
+using Warehome.Web.DTO.Input;
+using Warehome.Web.DTO.Output;
 
 namespace Warehome.Web.Controllers.Api;
 

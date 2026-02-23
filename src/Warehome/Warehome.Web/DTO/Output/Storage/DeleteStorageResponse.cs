@@ -1,8 +1,8 @@
 ﻿namespace Warehome.Web.DTO.Output;
 
-public enum DeleteStorageCategoryResponse
+public enum DeleteStorageResponse
 {
     Success,
     NotEmpty,
-    NotFound
+    NotFound,
 }

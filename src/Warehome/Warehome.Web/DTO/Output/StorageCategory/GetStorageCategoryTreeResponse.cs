@@ -1,4 +1,4 @@
-﻿namespace Warehome.Web.Dto.Output;
+﻿namespace Warehome.Web.DTO.Output;
 
 public class GetStorageCategoryTreeResponse
 {

@@ -1,4 +1,4 @@
-﻿namespace Warehome.Web.Dto.Input;
+﻿namespace Warehome.Web.DTO.Input;
 
 public class CreateStorageCategoryRequest
 {

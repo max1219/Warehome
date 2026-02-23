@@ -1,8 +1,8 @@
 ﻿namespace Warehome.Web.DTO.Output;
 
-public enum CreateStorageCategoryResponse
+public enum CreateStorageResponse
 {
     Success,
     AlreadyExists,
-    ParentNotFound
+    CategoryNotFound
 }
