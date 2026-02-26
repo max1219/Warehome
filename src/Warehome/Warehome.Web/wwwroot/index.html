@@ -2,24 +2,31 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8" />
-    <link rel="stylesheet" href="css/site.css">
     <title>Категории</title>
+    <link rel="stylesheet" href="css/site.css">
 </head>
 <body>
 
-<h2 id="path"></h2>
-
-<div>
-    <button id="btnUp">Вверх</button>
-    <button id="btnCreateCategory">Создать подкатегорию</button>
-    <button id="btnCreateStorage">Создать склад</button>
+<div id="modeSwitcher">
+    <button id="btnStoragesMode" class="mode-btn active">Склады</button>
+    <button id="btnItemsMode" class="mode-btn">Предметы</button>
 </div>
 
-<h3>Категории</h3>
-<ul id="categoryList"></ul>
+<h2 id="path"></h2>
 
-<h3>Склады</h3>
-<ul id="storageList"></ul>
+<div id="actions">
+    <button id="btnUp">Вверх</button>
+    <button id="btnCreateCategory">Создать подкатегорию</button>
+    <button id="btnCreateLeaf">Создать элемент</button>
+</div>
+
+<div class="window">
+    <h3 id="categoryHeader">Категории складов</h3>
+    <ul id="categoryList"></ul>
+
+    <h3 id="leafHeader">Склады</h3>
+    <ul id="leafList"></ul>
+</div>
 
 <script src="js/app.js"></script>
 </body>
