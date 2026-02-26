@@ -1,12 +1,31 @@
-﻿/* Общий стиль */
-body {
+﻿body {
     font-family: Arial, sans-serif;
     margin: 20px;
     background: #1e1e1e;
     color: #e0e0e0;
 }
 
-/* Путь */
+/* Переключатель режимов */
+#modeSwitcher {
+    margin-bottom: 20px;
+}
+
+.mode-btn {
+    padding: 10px 20px;
+    margin-right: 10px;
+    background: #333;
+    color: #ccc;
+    border: 1px solid #555;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.mode-btn.active {
+    background: #007acc;
+    color: #fff;
+    border-color: #0090ff;
+}
+
 #path {
     font-weight: bold;
     background: #2b2b2b;
@@ -14,12 +33,10 @@ body {
     border-radius: 6px;
     border: 1px solid #444;
     display: inline-block;
-    color: #fff;
+    margin-bottom: 15px;
 }
 
-/* Кнопки */
 button {
-    margin-right: 10px;
     padding: 6px 12px;
     cursor: pointer;
     background: #3a3a3a;
@@ -37,13 +54,11 @@ button:hover {
     cursor: default;
 }
 
-/* Списки */
 ul {
     list-style: none;
     padding-left: 0;
 }
 
-/* Плашки категорий и складов */
 li {
     background: #2b2b2b;
     padding: 12px 14px;
@@ -53,7 +68,7 @@ li {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    cursor: pointer; /* ВАЖНО: кликабельна вся плашка */
+    cursor: pointer;
     transition: background 0.15s;
 }
 
@@ -61,13 +76,6 @@ li:hover {
     background: #3a3a3a;
 }
 
-/* Текст внутри плашки */
-li span {
-    font-size: 16px;
-    pointer-events: none; /* чтобы клик шел на li */
-}
-
-/* Кнопка удаления */
 li button {
     background: #b30000;
     border: none;
@@ -81,7 +89,6 @@ li button:hover {
     background: #e60000;
 }
 
-/* Заголовки */
 h3 {
     margin-top: 25px;
     margin-bottom: 10px;

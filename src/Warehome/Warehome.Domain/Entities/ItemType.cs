@@ -1,9 +1,9 @@
 ﻿namespace Warehome.Domain.Entities;
 
-public class Item
+public class ItemType
 {
     public string Name { get; set; }
-    public Category<Item>? Category { get; set; }
+    public Category<ItemType>? Category { get; set; }
     public string? Description { get; set; }
     
 }
