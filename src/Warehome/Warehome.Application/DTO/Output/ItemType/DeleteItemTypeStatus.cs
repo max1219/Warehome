@@ -3,6 +3,6 @@
 public enum DeleteItemTypeStatus
 {
     Success,
-    
+    HasStock,
     NotFound,
 }
