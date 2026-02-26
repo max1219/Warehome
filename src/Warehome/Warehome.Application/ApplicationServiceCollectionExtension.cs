@@ -10,6 +10,8 @@ public static class ApplicationServiceCollectionExtension
     {
         services.AddScoped<IStorageService, StorageService>();
         services.AddScoped<IStorageCategoryService, StorageCategoryService>();
+        services.AddScoped<IItemTypeService, ItemTypeService>();
+        services.AddScoped<IItemTypeCategoryService, ItemTypeCategoryService>();
         return services;
     }
 }

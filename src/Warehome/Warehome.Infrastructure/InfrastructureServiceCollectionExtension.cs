@@ -15,7 +15,9 @@ public static class InfrastructureServiceCollectionExtension
         services.AddDbContext<AppDbContext>(options => 
             options.UseSqlite(configuration.GetConnectionString("Default")));
         services.AddScoped<IStorageRepository, EfStorageRepository>();
+        services.AddScoped<IItemTypeRepository, EfItemTypeRepository>();
         services.AddScoped<ICategoryRepository<Storage>, EfStorageCategoryRepository>();
+        services.AddScoped<ICategoryRepository<ItemType>, EfItemTypeCategoryRepository>();
         return services;
     }
 }
