@@ -159,7 +159,7 @@ public class EfStorageRepositoryTests
     }    
     
     [Fact]
-    public async Task GetAllByCategory_WithOutCategory()
+    public async Task GetAllByCategory_WithoutCategory()
     {
         // Arrange
         string wrongCategoryPath = "wrongCategoryPath";
@@ -184,5 +184,73 @@ public class EfStorageRepositoryTests
             storageNames.Order(),
             result.Select(storage => storage.Name).Order()
         );
+    }
+
+    [Fact]
+    public async Task CheckExists_ExistsWithoutCategory_ReturnsTrue()
+    {
+        // Arrange
+        string storageName = "test";
+        
+        await _context.Storages.AddAsync(
+            new Infrastructure.Data.Entities.Storage { Name = storageName});
+        await _context.SaveChangesAsync();
+        
+        // Act
+        bool result = await _repository.CheckExistsAsync(
+            new Storage { Name = storageName});
+        
+        // Assert
+        Assert.True(result);
+    }
+    
+    [Fact]
+    public async Task CheckExists_ExistsWithCategory_ReturnsTrue()
+    {
+        // Arrange
+        string storageName = "test";
+        string categoryPath = "c1/c2/c3";
+        
+        EntityEntry<StorageCategory> category =
+            await _context.StorageCategories.AddAsync(new StorageCategory { Path = categoryPath });
+        await _context.SaveChangesAsync();
+        await _context.Storages.AddAsync(
+            new Infrastructure.Data.Entities.Storage { Name = storageName, CategoryId = category.Entity.Id });
+        await _context.SaveChangesAsync();
+        
+        // Act
+        bool result = await _repository.CheckExistsAsync(
+            new Storage { Name = storageName, Category = new Category<Storage> {Path = categoryPath}});
+        
+        // Assert
+        Assert.True(result);
+    }    
+    
+    [Fact]
+    public async Task CheckExists_HasSimilarOnes_ReturnsFalse()
+    {
+        // Arrange
+        string storageName = "test";
+        string wrongStorageName = "wrong";
+        string categoryPath = "c1/c2/c3";
+        string wrongCategoryPath = "w1/w2";
+        
+        EntityEntry<StorageCategory> category =
+            await _context.StorageCategories.AddAsync(new StorageCategory { Path = categoryPath });
+        EntityEntry<StorageCategory> wrongCategory =
+            await _context.StorageCategories.AddAsync(new StorageCategory { Path = wrongCategoryPath });
+        await _context.SaveChangesAsync();
+        await _context.Storages.AddAsync(
+            new Infrastructure.Data.Entities.Storage { Name = storageName, CategoryId = wrongCategory.Entity.Id });
+        await _context.Storages.AddAsync(
+            new Infrastructure.Data.Entities.Storage { Name = wrongStorageName, CategoryId = category.Entity.Id });
+        await _context.SaveChangesAsync();
+        
+        // Act
+        bool result = await _repository.CheckExistsAsync(
+            new Storage { Name = storageName, Category = new Category<Storage> {Path = categoryPath}});
+        
+        // Assert
+        Assert.False(result);
     }
 }
