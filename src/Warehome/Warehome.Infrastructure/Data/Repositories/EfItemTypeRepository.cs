@@ -11,6 +11,22 @@ public class EfItemTypeRepository(AppDbContext context) : IItemTypeRepository
 {
     private readonly AppDbContext _context = context;
 
+    public async Task<bool> CheckExistsAsync(DomainItemType itemType)
+    {
+        int? categoryId = null;
+        if (itemType.Category is not null)
+        {
+            categoryId = (await _context.ItemTypeCategories.FirstOrDefaultAsync(
+                c => c.Path == itemType.Category.Path))?.Id;
+            if (!categoryId.HasValue)
+            {
+                return false;
+            }
+        }
+        
+        return await _context.ItemTypes.AnyAsync(t => t.Name == itemType.Name && t.CategoryId == categoryId);
+    }
+
     public async Task<DomainItemType?> GetAsync(string name, Category<DomainItemType>? category)
     {
         InfrastructureItemType? itemType = await _context.ItemTypes.Where(

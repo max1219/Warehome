@@ -34,11 +34,11 @@ public class EfItemTypeRepositoryTests
         ItemType itemType2 = new ItemType { Name = itemTypeName2 };
         await _context.ItemTypes.AddAsync(new Infrastructure.Data.Entities.ItemType() { Name = itemTypeName1 });
         await _context.SaveChangesAsync();
-        
+
         // Act & Assert
         await _repository.AddAsync(itemType2);
     }
-    
+
     [Fact]
     public async Task Add_WithCategory_Success()
     {
@@ -46,15 +46,15 @@ public class EfItemTypeRepositoryTests
         string itemTypeName = "test1";
         string categoryPath = "c1/c2/c3";
         Category<ItemType> category = new Category<ItemType> { Path = categoryPath };
-        ItemType itemType = new ItemType { Name = itemTypeName, Category = category};
+        ItemType itemType = new ItemType { Name = itemTypeName, Category = category };
         await _context.ItemTypeCategories.AddAsync(new ItemTypeCategory { Path = categoryPath });
         await _context.SaveChangesAsync();
-        
+
         // Act & Assert
         await _repository.AddAsync(itemType);
-        
-    }    
-    
+
+    }
+
     [Fact]
     public async Task Add_WithCategory_SavedWithoutChanges()
     {
@@ -62,14 +62,14 @@ public class EfItemTypeRepositoryTests
         string itemTypeName = "test1";
         string categoryPath = "c1/c2/c3";
         Category<ItemType> category = new Category<ItemType> { Path = categoryPath };
-        ItemType itemType = new ItemType { Name = itemTypeName, Category = category};
+        ItemType itemType = new ItemType { Name = itemTypeName, Category = category };
         await _context.ItemTypeCategories.AddAsync(new ItemTypeCategory { Path = categoryPath });
         await _context.SaveChangesAsync();
 
         // Act
         await _repository.AddAsync(itemType);
         ItemType? result = await _repository.GetAsync(itemTypeName, category);
-        
+
         // Assert
         Assert.NotNull(result);
         Assert.Equal(itemTypeName, result.Name);
@@ -88,7 +88,7 @@ public class EfItemTypeRepositoryTests
         Category<ItemType> category2 = new Category<ItemType> { Path = categoryPath2 };
         ItemType itemType1 = new ItemType { Name = itemTypeName, Category = category1 };
         ItemType itemType2 = new ItemType { Name = itemTypeName, Category = category2 };
-        
+
         await _context.ItemTypeCategories.AddAsync(new ItemTypeCategory { Path = categoryPath1 });
         await _context.ItemTypeCategories.AddAsync(new ItemTypeCategory { Path = categoryPath2 });
         await _context.SaveChangesAsync();
@@ -97,7 +97,7 @@ public class EfItemTypeRepositoryTests
         await _repository.AddAsync(itemType1);
         await _repository.AddAsync(itemType2);
     }
-    
+
     [Fact]
     public async Task Add_AlreadyExists_ThrowsException()
     {
@@ -106,7 +106,7 @@ public class EfItemTypeRepositoryTests
         ItemType itemType = new ItemType { Name = itemTypeName };
         await _context.ItemTypes.AddAsync(new Infrastructure.Data.Entities.ItemType { Name = itemTypeName });
         await _context.SaveChangesAsync();
-        
+
         // Act & Assert
         await Assert.ThrowsAsync<DbUpdateException>(() => _repository.AddAsync(itemType));
     }
@@ -117,16 +117,16 @@ public class EfItemTypeRepositoryTests
         // Arrange
         string itemTypeName1 = "test1";
         string itemTypeName2 = "test2";
-        
+
         await _context.ItemTypes.AddAsync(new Infrastructure.Data.Entities.ItemType { Name = itemTypeName1 });
-        
+
         // Act
         ItemType? actual = await _repository.GetAsync(itemTypeName2, null);
-        
+
         // Assert
         Assert.Null(actual);
     }
-    
+
     [Fact]
     public async Task GetAllByCategory_WithCategory()
     {
@@ -156,8 +156,8 @@ public class EfItemTypeRepositoryTests
             itemTypeNames.Order(),
             result.Select(itemType => itemType.Name).Order()
         );
-    }    
-    
+    }
+
     [Fact]
     public async Task GetAllByCategory_WithOutCategory()
     {
@@ -184,5 +184,74 @@ public class EfItemTypeRepositoryTests
             itemTypeNames.Order(),
             result.Select(itemType => itemType.Name).Order()
         );
+    }
+
+
+    [Fact]
+    public async Task CheckExists_ExistsWithoutCategory_ReturnsTrue()
+    {
+        // Arrange
+        string name = "test";
+
+        await _context.ItemTypes.AddAsync(
+            new Infrastructure.Data.Entities.ItemType { Name = name });
+        await _context.SaveChangesAsync();
+
+        // Act
+        bool result = await _repository.CheckExistsAsync(
+            new ItemType { Name = name });
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public async Task CheckExists_ExistsWithCategory_ReturnsTrue()
+    {
+        // Arrange
+        string name = "test";
+        string categoryPath = "c1/c2/c3";
+
+        EntityEntry<ItemTypeCategory> category =
+            await _context.ItemTypeCategories.AddAsync(new ItemTypeCategory { Path = categoryPath });
+        await _context.SaveChangesAsync();
+        await _context.ItemTypes.AddAsync(
+            new Infrastructure.Data.Entities.ItemType { Name = name, CategoryId = category.Entity.Id });
+        await _context.SaveChangesAsync();
+
+        // Act
+        bool result = await _repository.CheckExistsAsync(
+            new ItemType { Name = name, Category = new Category<ItemType> { Path = categoryPath } });
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public async Task CheckExists_HasSimilarOnes_ReturnsFalse()
+    {
+        // Arrange
+        string name = "test";
+        string wrongName = "wrong";
+        string categoryPath = "c1/c2/c3";
+        string wrongCategoryPath = "w1/w2";
+
+        EntityEntry<ItemTypeCategory> category =
+            await _context.ItemTypeCategories.AddAsync(new ItemTypeCategory { Path = categoryPath });
+        EntityEntry<ItemTypeCategory> wrongCategory =
+            await _context.ItemTypeCategories.AddAsync(new ItemTypeCategory { Path = wrongCategoryPath });
+        await _context.SaveChangesAsync();
+        await _context.ItemTypes.AddAsync(
+            new Infrastructure.Data.Entities.ItemType { Name = name, CategoryId = wrongCategory.Entity.Id });
+        await _context.ItemTypes.AddAsync(
+            new Infrastructure.Data.Entities.ItemType { Name = wrongName, CategoryId = category.Entity.Id });
+        await _context.SaveChangesAsync();
+
+        // Act
+        bool result = await _repository.CheckExistsAsync(
+            new ItemType { Name = name, Category = new Category<ItemType> { Path = categoryPath } });
+
+        // Assert
+        Assert.False(result);
     }
 }
