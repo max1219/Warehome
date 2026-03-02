@@ -4,6 +4,7 @@ namespace Warehome.Application.Repositories;
 
 public interface IStorageRepository
 {
+    Task<bool> CheckExistsAsync(Storage storage);
     Task<Storage?> GetAsync(string name, Category<Storage>? category);
     IAsyncEnumerable<Storage> GetAllByCategoryAsync(Category<Storage>? category);
     Task AddAsync(Storage storage);

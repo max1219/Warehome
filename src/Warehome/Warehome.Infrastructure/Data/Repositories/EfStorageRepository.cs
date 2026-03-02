@@ -11,6 +11,22 @@ public class EfStorageRepository(AppDbContext context) : IStorageRepository
 {
     private readonly AppDbContext _context = context;
 
+    public async Task<bool> CheckExistsAsync(DomainStorage storage)
+    {
+        int? categoryId = null;
+        if (storage.Category is not null)
+        {
+            categoryId = (await _context.StorageCategories.FirstOrDefaultAsync(
+                c => c.Path == storage.Category.Path))?.Id;
+            if (!categoryId.HasValue)
+            {
+                return false;
+            }
+        }
+        
+        return await _context.Storages.AnyAsync(s => s.Name == storage.Name && s.CategoryId == categoryId);
+    }
+
     public async Task<DomainStorage?> GetAsync(string name, Category<DomainStorage>? category)
     {
         InfrastructureStorage? storage = await _context.Storages.Where(
