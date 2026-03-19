@@ -1,5 +1,5 @@
 ﻿using Warehome.Application.DTO.Input;
-using Warehome.Application.DTO.Output.ItemStock;
+using Warehome.Application.DTO.Output;
 
 namespace Warehome.Application.Services;
 

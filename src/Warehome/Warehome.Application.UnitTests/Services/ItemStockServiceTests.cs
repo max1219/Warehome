@@ -1,6 +1,6 @@
 ﻿using Moq;
 using Warehome.Application.DTO.Input;
-using Warehome.Application.DTO.Output.ItemStock;
+using Warehome.Application.DTO.Output;
 using Warehome.Application.Repositories;
 using Warehome.Application.Services.Implementations;
 using Warehome.Domain.Entities;

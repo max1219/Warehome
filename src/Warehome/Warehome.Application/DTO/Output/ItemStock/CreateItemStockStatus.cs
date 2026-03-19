@@ -1,4 +1,4 @@
-﻿namespace Warehome.Application.DTO.Output.ItemStock;
+﻿namespace Warehome.Application.DTO.Output;
 
 public enum CreateItemStockStatus
 {
