@@ -21,33 +21,8 @@ public class ItemTypeCategoryController : ControllerBase
     [HttpGet("tree")]
     public async Task<ActionResult<GetItemTypeCategoryTreeResponse>> GetTree()
     {
-        GetItemTypeCategoryTreeResult applicationResult =
-            await _itemTypeCategoryService.GetTreeAsync();
-        GetItemTypeCategoryTreeResponse response = new GetItemTypeCategoryTreeResponse();
-        Stack<GetItemTypeCategoryTreeResult> appResultStack =
-            new Stack<GetItemTypeCategoryTreeResult>([applicationResult]);
-        Stack<GetItemTypeCategoryTreeResponse> responseStack = 
-            new Stack<GetItemTypeCategoryTreeResponse>([response]);
-
-        while (appResultStack.Any())
-        {
-            GetItemTypeCategoryTreeResult appResultNode = appResultStack.Pop();
-            GetItemTypeCategoryTreeResponse responseNode = responseStack.Pop();
-            responseNode.Name = appResultNode.Name;
-            responseNode.ItemNames = appResultNode.ItemNames;
-            responseNode.ItemTypeCount = appResultNode.ItemNames.Count;
-            responseNode.ChildCount = appResultNode.Children.Count;
-            List<GetItemTypeCategoryTreeResponse> children = new (responseNode.ChildCount);
-            foreach (GetItemTypeCategoryTreeResult child in appResultNode.Children)
-            {
-                children.Add(new GetItemTypeCategoryTreeResponse());
-                responseStack.Push(children.Last());
-                appResultStack.Push(child);
-            }
-            responseNode.Children = children;
-        }
-        
-        return response;
+        GetItemTypeCategoryTreeResult applicationResult = await _itemTypeCategoryService.GetTreeAsync();
+        return MapNode(applicationResult);
     }
 
     [HttpPost]
@@ -86,4 +61,17 @@ public class ItemTypeCategoryController : ControllerBase
             _ => throw new ArgumentOutOfRangeException()
         };
     }
+    
+    private static GetItemTypeCategoryTreeResponse MapNode(GetItemTypeCategoryTreeResult appNode)
+    {
+        return new GetItemTypeCategoryTreeResponse
+        {
+            Name = appNode.Name,
+            ItemNames = appNode.ItemNames,
+            ItemTypeCount = appNode.ItemNames.Count,
+            ChildCount = appNode.Children.Count,
+            Children = appNode.Children.Select(MapNode).ToList()
+        };
+    }
+
 }

@@ -23,31 +23,7 @@ public class StorageCategoryController : ControllerBase
     {
         GetStorageCategoryTreeResult applicationResult =
             await _storageCategoryService.GetTreeAsync();
-        GetStorageCategoryTreeResponse response = new GetStorageCategoryTreeResponse();
-        Stack<GetStorageCategoryTreeResult> appResultStack =
-            new Stack<GetStorageCategoryTreeResult>([applicationResult]);
-        Stack<GetStorageCategoryTreeResponse> responseStack = 
-            new Stack<GetStorageCategoryTreeResponse>([response]);
-
-        while (appResultStack.Any())
-        {
-            GetStorageCategoryTreeResult appResultNode = appResultStack.Pop();
-            GetStorageCategoryTreeResponse responseNode = responseStack.Pop();
-            responseNode.Name = appResultNode.Name;
-            responseNode.StorageNames = appResultNode.StorageNames;
-            responseNode.StorageCount = appResultNode.StorageNames.Count;
-            responseNode.ChildCount = appResultNode.Children.Count;
-            List<GetStorageCategoryTreeResponse> children = new (responseNode.ChildCount);
-            foreach (GetStorageCategoryTreeResult child in appResultNode.Children)
-            {
-                children.Add(new GetStorageCategoryTreeResponse());
-                responseStack.Push(children.Last());
-                appResultStack.Push(child);
-            }
-            responseNode.Children = children;
-        }
-        
-        return response;
+        return MapNode(applicationResult);
     }
 
     [HttpPost]
@@ -84,6 +60,18 @@ public class StorageCategoryController : ControllerBase
             DeleteStorageCategoryStatus.NotEmpty => Conflict(DeleteStorageCategoryResponse.NotEmpty),
             DeleteStorageCategoryStatus.NotFound => NotFound(DeleteStorageCategoryResponse.NotFound),
             _ => throw new ArgumentOutOfRangeException()
+        };
+    }
+    
+    private static GetStorageCategoryTreeResponse MapNode(GetStorageCategoryTreeResult appNode)
+    {
+        return new GetStorageCategoryTreeResponse
+        {
+            Name = appNode.Name,
+            StorageNames = appNode.StorageNames,
+            StorageCount = appNode.StorageNames.Count,
+            ChildCount = appNode.Children.Count,
+            Children = appNode.Children.Select(MapNode).ToList()
         };
     }
 }
