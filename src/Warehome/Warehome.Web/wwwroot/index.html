@@ -2,30 +2,125 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8" />
-    <title>Категории</title>
-    <link rel="stylesheet" href="css/site.css">
+    <title>Склады и предметы</title>
+    <link rel="stylesheet" href="css/site.css" />
 </head>
 <body>
 
+<!-- Переключатель режимов -->
 <div id="modeSwitcher">
     <button id="btnStoragesMode" class="mode-btn active">Склады</button>
     <button id="btnItemsMode" class="mode-btn">Предметы</button>
 </div>
 
-<h2 id="path"></h2>
+<div id="layout">
+    <!-- ЛЕВАЯ ПАНЕЛЬ: навигация по дереву -->
+    <div id="leftPanel">
+        <!-- Путь внутри активного дерева -->
+        <h2 id="path"></h2>
 
-<div id="actions">
-    <button id="btnUp">Вверх</button>
-    <button id="btnCreateCategory">Создать подкатегорию</button>
-    <button id="btnCreateLeaf">Создать элемент</button>
+        <!-- Кнопки действий над деревом -->
+        <div id="actions">
+            <button id="btnUp">Вверх</button>
+            <button id="btnCreateCategory">Создать подкатегорию</button>
+            <button id="btnCreateLeaf">Создать элемент</button>
+        </div>
+
+        <!-- Категории -->
+        <h3 id="categoryHeader">Категории складов</h3>
+        <ul id="categoryList"></ul>
+
+        <!-- Листья (склады или типы предметов) -->
+        <h3 id="leafHeader">Склады</h3>
+        <ul id="leafList"></ul>
+    </div>
+
+    <!-- ПРАВАЯ ПАНЕЛЬ: остатки выбранного склада/типа -->
+    <div id="rightPanel">
+        <!-- Заголовок: путь до выбранного склада или типа -->
+        <h3 id="selectedHeader">Ничего не выбрано</h3>
+
+        <!-- Кнопка добавления остатка для выбранного склада/типа -->
+        <button id="btnCreateStock" style="display:none">Добавить остаток</button>
+
+        <!-- Список остатков (каждая плашка: название + количество) -->
+        <h3 id="stockHeader" style="display:none">Остатки</h3>
+        <ul id="stockList"></ul>
+    </div>
 </div>
 
-<div class="window">
-    <h3 id="categoryHeader">Категории складов</h3>
-    <ul id="categoryList"></ul>
+<!-- МОДАЛ: просмотр / изменение / удаление одного остатка -->
+<div id="stockDetailsModal" class="modal" style="display:none">
+    <div class="modal-content">
+        <h3 id="stockDetailsTitle">Остаток</h3>
 
-    <h3 id="leafHeader">Склады</h3>
-    <ul id="leafList"></ul>
+        <!-- Полный путь до типа и склада -->
+        <div id="stockDetailsPaths">
+            <p id="stockItemTypePath"></p>
+            <p id="stockStoragePath"></p>
+        </div>
+
+        <!-- Текущее количество -->
+        <p>
+            Текущее количество:
+            <span id="stockCurrentQuantity"></span>
+        </p>
+
+        <!-- Изменение количества -->
+        <div id="stockChangeQuantityBlock">
+            <label for="stockNewQuantity">Новое количество:</label>
+            <input id="stockNewQuantity" type="number" min="0" />
+            <button id="btnApplyStockQuantity">Изменить количество</button>
+        </div>
+
+        <!-- Удаление остатка -->
+        <div id="stockDeleteBlock">
+            <button id="btnDeleteStock">Удалить остаток</button>
+        </div>
+
+        <!-- Закрыть -->
+        <div class="modal-footer">
+            <button id="btnCloseStockDetails">Закрыть</button>
+        </div>
+    </div>
+</div>
+
+<!-- МОДАЛ: добавление нового остатка -->
+<div id="stockCreateModal" class="modal" style="display:none">
+    <div class="modal-content">
+        <h3 id="stockCreateTitle">Добавить остаток</h3>
+
+        <!-- Блок выбора второй стороны (тип или склад) -->
+        <!-- Если слева выбран склад — здесь дерево категорий типов -->
+        <!-- Если слева выбран тип — здесь дерево категорий складов -->
+        <div id="stockSelectTargetBlock">
+            <h4 id="stockSelectTargetHeader"></h4>
+            <div id="stockSelectTreeContainer">
+                <!-- Внутрь будет рендериться дерево категорий для выбора листа -->
+                <h5 id="stockSelectPath"></h5>
+                <div id="stockSelectTree">
+                    <h6>Категории</h6>
+                    <ul id="stockSelectCategoryList"></ul>
+
+                    <h6 id="stockSelectLeafHeader"></h6>
+                    <ul id="stockSelectLeafList"></ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- После выбора листа (склада или типа) показываем ввод количества -->
+        <div id="stockCreateQuantityBlock" style="display:none">
+            <p id="stockCreateSelectedInfo"></p>
+            <label for="stockCreateQuantity">Количество:</label>
+            <input id="stockCreateQuantity" type="number" min="0" />
+            <button id="btnCreateStockConfirm">Создать</button>
+        </div>
+
+        <!-- Закрыть -->
+        <div class="modal-footer">
+            <button id="btnCloseStockCreate">Отмена</button>
+        </div>
+    </div>
 </div>
 
 <script src="js/app.js"></script>

@@ -1,57 +1,25 @@
-﻿body {
-    font-family: Arial, sans-serif;
-    margin: 20px;
+﻿/* ------------------------------------------------------------
+   ОБЩЕЕ
+------------------------------------------------------------ */
+
+body {
+    margin: 0;
+    padding: 0;
     background: #1e1e1e;
-    color: #e0e0e0;
-}
-
-/* Переключатель режимов */
-#modeSwitcher {
-    margin-bottom: 20px;
-}
-
-.mode-btn {
-    padding: 10px 20px;
-    margin-right: 10px;
-    background: #333;
-    color: #ccc;
-    border: 1px solid #555;
-    border-radius: 6px;
-    cursor: pointer;
-}
-
-.mode-btn.active {
-    background: #007acc;
-    color: #fff;
-    border-color: #0090ff;
-}
-
-#path {
-    font-weight: bold;
-    background: #2b2b2b;
-    padding: 8px 12px;
-    border-radius: 6px;
-    border: 1px solid #444;
-    display: inline-block;
-    margin-bottom: 15px;
+    color: #ddd;
+    font-family: sans-serif;
 }
 
 button {
+    background: #333;
+    color: #ddd;
+    border: 1px solid #555;
     padding: 6px 12px;
     cursor: pointer;
-    background: #3a3a3a;
-    color: #fff;
-    border: 1px solid #555;
-    border-radius: 4px;
 }
 
 button:hover {
-    background: #505050;
-}
-
-#btnUp:disabled {
-    opacity: 0.3;
-    cursor: default;
+    background: #444;
 }
 
 ul {
@@ -59,38 +27,183 @@ ul {
     padding-left: 0;
 }
 
-li {
-    background: #2b2b2b;
-    padding: 12px 14px;
-    margin-bottom: 8px;
-    border-radius: 6px;
-    border: 1px solid #444;
+h2, h3, h4, h5 {
+    margin: 10px 0;
+}
+
+
+/* ------------------------------------------------------------
+   ДВУХПАНЕЛЬНЫЙ LAYOUT
+------------------------------------------------------------ */
+
+#layout {
     display: flex;
-    justify-content: space-between;
+    height: calc(100vh - 60px);
+    gap: 20px;
+    padding: 10px;
+}
+
+#leftPanel {
+    width: 40%;
+    border-right: 1px solid #444;
+    padding-right: 15px;
+    overflow-y: auto;
+}
+
+#rightPanel {
+    width: 60%;
+    padding-left: 15px;
+    overflow-y: auto;
+}
+
+
+/* ------------------------------------------------------------
+   ПЕРЕКЛЮЧАТЕЛЬ РЕЖИМОВ
+------------------------------------------------------------ */
+
+#modeSwitcher {
+    display: flex;
+    gap: 10px;
+    padding: 10px;
+    border-bottom: 1px solid #444;
+}
+
+.mode-btn {
+    padding: 8px 16px;
+}
+
+.mode-btn.active {
+    background: #555;
+}
+
+
+/* ------------------------------------------------------------
+   ЛЕВАЯ ПАНЕЛЬ: категории и листья
+------------------------------------------------------------ */
+
+/* Кликабельная плашка */
+.category-item,
+.leaf-item {
+    position: relative;
+    padding: 10px 36px 10px 10px; /* справа место под кнопку */
+    margin: 4px 0;
+    background: #2a2a2a;
+    border: 1px solid #444;
+    cursor: pointer;
+    user-select: none;
+}
+
+.category-item:hover,
+.leaf-item:hover {
+    background: #333;
+}
+
+/* Текст внутри плашки — НЕ перехватывает клики */
+.category-item span,
+.leaf-item span {
+    display: block;
+}
+
+/* Кнопка удаления — абсолютная, не ломает область клика */
+.delete-btn {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 2px 6px;
+    cursor: pointer;
+    z-index: 2;
+}
+
+
+/* ------------------------------------------------------------
+   ПРАВАЯ ПАНЕЛЬ: остатки
+------------------------------------------------------------ */
+
+.stock-item {
+    padding: 8px 12px;
+    margin: 6px 0;
+    background: #2a2a2a;
+    border: 1px solid #444;
+    cursor: pointer;
+    user-select: none;
+}
+
+.stock-item:hover {
+    background: #333;
+}
+
+
+/* ------------------------------------------------------------
+   МОДАЛКИ
+------------------------------------------------------------ */
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.65);
+    display: flex;
+    justify-content: center;
     align-items: center;
-    cursor: pointer;
-    transition: background 0.15s;
+    z-index: 50;
 }
 
-li:hover {
-    background: #3a3a3a;
+.modal-content {
+    background: #2a2a2a;
+    padding: 20px;
+    border: 1px solid #555;
+    width: 500px;
+    max-height: 80vh;
+    overflow-y: auto;
 }
 
-li button {
-    background: #b30000;
-    border: none;
-    padding: 6px 10px;
-    border-radius: 4px;
-    color: white;
-    cursor: pointer;
+.modal-footer {
+    margin-top: 20px;
+    text-align: right;
 }
 
-li button:hover {
-    background: #e60000;
+
+/* ------------------------------------------------------------
+   МИНИ‑ПРОВОДНИК В МОДАЛКЕ ДОБАВЛЕНИЯ ОСТАТКА
+------------------------------------------------------------ */
+
+#stockSelectTreeContainer {
+    border: 1px solid #444;
+    padding: 10px;
+    margin-bottom: 15px;
 }
 
-h3 {
-    margin-top: 25px;
+#stockSelectPath {
+    font-size: 14px;
+    color: #aaa;
     margin-bottom: 10px;
-    color: #fff;
+}
+
+#stockSelectTree ul li {
+    padding: 6px 10px;
+    margin: 4px 0;
+    background: #333;
+    border: 1px solid #555;
+    cursor: pointer;
+    user-select: none;
+}
+
+#stockSelectTree ul li:hover {
+    background: #444;
+}
+
+
+/* ------------------------------------------------------------
+   ИНПУТЫ
+------------------------------------------------------------ */
+
+input[type="number"] {
+    width: 100px;
+    padding: 4px;
+    background: #1e1e1e;
+    color: #ddd;
+    border: 1px solid #555;
 }
