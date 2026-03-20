@@ -18,6 +18,7 @@ public static class InfrastructureServiceCollectionExtension
         services.AddScoped<IItemTypeRepository, EfItemTypeRepository>();
         services.AddScoped<ICategoryRepository<Storage>, EfStorageCategoryRepository>();
         services.AddScoped<ICategoryRepository<ItemType>, EfItemTypeCategoryRepository>();
+        services.AddScoped<IItemStockRepository, EfItemStockRepository>();
         return services;
     }
 }
