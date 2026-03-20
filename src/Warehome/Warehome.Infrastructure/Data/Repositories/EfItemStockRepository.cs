@@ -56,13 +56,11 @@ public class EfItemStockRepository(AppDbContext context) : IItemStockRepository
             throw new Exception("New itemType not found");
         }
 
-        InfrastructureItemStock newStock = new InfrastructureItemStock
-        {
-            Id = item.Id,
-            ItemTypeId = typeId.Value,
-            StorageId = storageId.Value,
-            Quantity = item.Quantity,
-        };
+        InfrastructureItemStock newStock = _context.ItemStocks.First(x => x.Id == item.Id);
+
+        newStock.ItemTypeId = typeId.Value;
+        newStock.StorageId = storageId.Value;
+        newStock.Quantity = item.Quantity;
         _context.Update(newStock);
         await _context.SaveChangesAsync();
     }
@@ -97,7 +95,7 @@ public class EfItemStockRepository(AppDbContext context) : IItemStockRepository
             .Include(s => s.Storage).ThenInclude(st => st.Category)
             .Select(s => s.ToDomain())
             .AsAsyncEnumerable();
-        
+
         await foreach (DomainItemStock item in query)
         {
             yield return item;
@@ -118,13 +116,13 @@ public class EfItemStockRepository(AppDbContext context) : IItemStockRepository
             .Include(s => s.Storage).ThenInclude(st => st.Category)
             .Select(s => s.ToDomain())
             .AsAsyncEnumerable();
-        
+
         await foreach (DomainItemStock item in query)
         {
             yield return item;
         }
     }
-    
+
     private async Task<int?> GetStorageIdAsync(Storage storage)
     {
         return (await _context.Storages
