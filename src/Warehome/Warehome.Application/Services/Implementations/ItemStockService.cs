@@ -77,7 +77,7 @@ public class ItemStockService(
         return ChangeItemStockQuantityStatus.Success;
     }
 
-    public async Task<GetAllStocksByTypeResult> GetAllByType(GetItemStocksByTypeCommand command)
+    public async Task<GetAllStocksByTypeResult> GetAllByTypeAsync(GetItemStocksByTypeCommand command)
     {
         ItemType itemType = new ItemType
         {
@@ -98,7 +98,7 @@ public class ItemStockService(
         return new GetAllStocksByTypeResult { Result = result, Status = GetAllStocksByTypeStatus.Success };
     }
 
-    public async Task<GetAllStocksByStorageResult> GetAllByStorage(GetItemStocksByStorageCommand command)
+    public async Task<GetAllStocksByStorageResult> GetAllByStorageAsync(GetItemStocksByStorageCommand command)
     {
         Storage storage = new Storage
         {

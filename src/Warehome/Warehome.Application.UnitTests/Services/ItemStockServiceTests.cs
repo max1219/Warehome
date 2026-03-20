@@ -252,7 +252,7 @@ public class ItemStockServiceTests
 
         // Act
         GetAllStocksByTypeResult result =
-            await service.GetAllByType(new GetItemStocksByTypeCommand { ItemTypeName = typeName });
+            await service.GetAllByTypeAsync(new GetItemStocksByTypeCommand { ItemTypeName = typeName });
 
         // Assert
         Assert.Equal(GetAllStocksByTypeStatus.Success, result.Status);
@@ -305,7 +305,7 @@ public class ItemStockServiceTests
 
         // Act
         GetAllStocksByTypeResult result =
-            await service.GetAllByType(new GetItemStocksByTypeCommand { ItemTypeName = typeName });
+            await service.GetAllByTypeAsync(new GetItemStocksByTypeCommand { ItemTypeName = typeName });
 
         // Assert
         Assert.Equal(GetAllStocksByTypeStatus.Success, result.Status);
@@ -356,7 +356,7 @@ public class ItemStockServiceTests
 
         // Act
         GetAllStocksByStorageResult result =
-            await service.GetAllByStorage(new GetItemStocksByStorageCommand { StorageName = storageName });
+            await service.GetAllByStorageAsync(new GetItemStocksByStorageCommand { StorageName = storageName });
 
         // Assert
         Assert.Equal(GetAllStocksByStorageStatus.Success, result.Status);
@@ -390,7 +390,7 @@ public class ItemStockServiceTests
 
         // Act
         GetAllStocksByTypeResult result =
-            await service.GetAllByType(new GetItemStocksByTypeCommand { ItemTypeName = typeName });
+            await service.GetAllByTypeAsync(new GetItemStocksByTypeCommand { ItemTypeName = typeName });
 
         // Assert
         Assert.Equal(GetAllStocksByTypeStatus.TypeNotFound, result.Status);
@@ -419,7 +419,7 @@ public class ItemStockServiceTests
 
         // Act
         GetAllStocksByStorageResult result =
-            await service.GetAllByStorage(new GetItemStocksByStorageCommand { StorageName = storageName });
+            await service.GetAllByStorageAsync(new GetItemStocksByStorageCommand { StorageName = storageName });
 
         // Assert
         Assert.Equal(GetAllStocksByStorageStatus.StorageNotFound, result.Status);

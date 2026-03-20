@@ -82,7 +82,7 @@ public class ItemStockController(IItemStockService itemStockService) : Controlle
         [FromBody] GetItemStocksByStorageRequest request)
     {
         AppDto.Output.GetAllStocksByStorageResult result =
-            await _itemStockService.GetAllByStorage(new AppDto.Input.GetItemStocksByStorageCommand
+            await _itemStockService.GetAllByStorageAsync(new AppDto.Input.GetItemStocksByStorageCommand
             {
                 StorageName = request.StorageName,
                 StorageCategoryPath = request.StorageCategoryPath
@@ -115,7 +115,7 @@ public class ItemStockController(IItemStockService itemStockService) : Controlle
     public async Task<ActionResult<GetAllStocksByTypeResponse>> GetByType([FromBody] GetItemStocksByTypeRequest request)
     {
         AppDto.Output.GetAllStocksByTypeResult result =
-            await _itemStockService.GetAllByType(new AppDto.Input.GetItemStocksByTypeCommand
+            await _itemStockService.GetAllByTypeAsync(new AppDto.Input.GetItemStocksByTypeCommand
             {
                 ItemTypeName = request.ItemTypeName,
                 ItemTypeCategoryPath = request.ItemTypeCategoryPath
