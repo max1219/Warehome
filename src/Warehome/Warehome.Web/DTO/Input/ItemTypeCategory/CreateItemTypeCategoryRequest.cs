@@ -2,6 +2,6 @@
 
 public class CreateItemTypeCategoryRequest
 {
-    public string Name { get; init; }
+    public required string Name { get; init; }
     public string? ParentPath { get; init; }
 }

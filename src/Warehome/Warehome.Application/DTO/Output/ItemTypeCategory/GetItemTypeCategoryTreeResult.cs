@@ -2,7 +2,10 @@
 
 public class GetItemTypeCategoryTreeResult
 {
-    public string Name { get; set; }
-    public IReadOnlyList<GetItemTypeCategoryTreeResult> Children { get; set; }
-    public IReadOnlyList<string> ItemNames { get; set; }
+    public required string Name { get; init; }
+
+    public IReadOnlyList<GetItemTypeCategoryTreeResult> Children { get; set; } =
+        Array.Empty<GetItemTypeCategoryTreeResult>();
+
+    public IReadOnlyList<string> ItemNames { get; set; } = Array.Empty<string>();
 }

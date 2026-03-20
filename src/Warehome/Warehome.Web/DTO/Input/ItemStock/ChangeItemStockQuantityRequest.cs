@@ -2,6 +2,6 @@
 
 public class ChangeItemStockQuantityRequest
 {
-    public int Id { get; set; }
-    public int NewQuantity { get; set; }
+    public required int Id { get; init; }
+    public required int NewQuantity { get; init; }
 }

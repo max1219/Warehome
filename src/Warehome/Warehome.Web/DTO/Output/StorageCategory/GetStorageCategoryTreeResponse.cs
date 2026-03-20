@@ -2,9 +2,9 @@
 
 public class GetStorageCategoryTreeResponse
 {
-    public string Name { get; set; }
-    public IReadOnlyList<GetStorageCategoryTreeResponse> Children { get; set; }
-    public int ChildCount { get; set; }
-    public IReadOnlyList<string> StorageNames { get; set; }
-    public int StorageCount { get; set; }
+    public required string Name { get; init; }
+    public required IReadOnlyList<GetStorageCategoryTreeResponse> Children { get; init; }
+    public required int ChildCount { get; init; }
+    public required IReadOnlyList<string> StorageNames { get; init; }
+    public required int StorageCount { get; init; }
 }

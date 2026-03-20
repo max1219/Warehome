@@ -2,6 +2,6 @@
 
 public class GetAllStocksByStorageResult
 {
-    public GetAllStocksByStorageStatus Status { get; set; }
-    public IEnumerable<GetItemStockResult>? Result { get; set; }
+    public required GetAllStocksByStorageStatus Status { get; init; }
+    public IEnumerable<GetItemStockResult>? Result { get; init; }
 }

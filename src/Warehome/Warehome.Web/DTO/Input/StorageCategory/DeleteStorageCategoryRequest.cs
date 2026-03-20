@@ -2,5 +2,5 @@
 
 public class DeleteStorageCategoryRequest
 {
-    public string Path { get; init; }
+    public required string Path { get; init; }
 }

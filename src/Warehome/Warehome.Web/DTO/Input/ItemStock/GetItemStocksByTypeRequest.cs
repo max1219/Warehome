@@ -2,6 +2,6 @@
 
 public class GetItemStocksByTypeRequest
 {
-    public string ItemTypeName { get; set; }
-    public string? ItemTypeCategoryPath { get; set; }
+    public required string ItemTypeName { get; init; }
+    public string? ItemTypeCategoryPath { get; init; }
 }

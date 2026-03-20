@@ -2,6 +2,6 @@
 
 public class GetAllStocksByTypeResult
 {
-    public GetAllStocksByTypeStatus Status { get; set; }
-    public IEnumerable<GetItemStockResult>? Result { get; set; }
+    public required GetAllStocksByTypeStatus Status { get; init; }
+    public IEnumerable<GetItemStockResult>? Result { get; init; }
 }

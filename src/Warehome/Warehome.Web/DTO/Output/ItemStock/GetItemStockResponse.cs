@@ -2,10 +2,10 @@
 
 public class GetItemStockResponse
 {
-    public int Id { get; set; }
-    public string ItemTypeName { get; set; }
-    public string? ItemTypeCategoryPath { get; set; }
-    public string StorageName { get; set; }
-    public string? StorageCategoryPath { get; set; }
-    public int Quantity { get; set; }
+    public required int Id { get; init; }
+    public required string ItemTypeName { get; init; }
+    public string? ItemTypeCategoryPath { get; init; }
+    public required string StorageName { get; init; }
+    public string? StorageCategoryPath { get; init; }
+    public required int Quantity { get; init; }
 }

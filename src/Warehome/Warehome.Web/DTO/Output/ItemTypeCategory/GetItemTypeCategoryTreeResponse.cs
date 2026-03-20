@@ -2,9 +2,9 @@
 
 public class GetItemTypeCategoryTreeResponse
 {
-    public string Name { get; set; }
-    public IReadOnlyList<GetItemTypeCategoryTreeResponse> Children { get; set; }
-    public int ChildCount { get; set; }
-    public IReadOnlyList<string> ItemNames { get; set; }
-    public int ItemTypeCount { get; set; }
+    public required string Name { get; init; }
+    public required IReadOnlyList<GetItemTypeCategoryTreeResponse> Children { get; init; }
+    public required int ChildCount { get; init; }
+    public required IReadOnlyList<string> ItemNames { get; init; }
+    public required int ItemTypeCount { get; init; }
 }

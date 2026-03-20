@@ -2,6 +2,6 @@
 
 public class GetItemStocksByStorageCommand
 {
-    public string StorageName { get; set; }
-    public string? StorageCategoryPath { get; set; }
+    public required string StorageName { get; init; }
+    public string? StorageCategoryPath { get; init; }
 }

@@ -2,6 +2,6 @@
 
 public class GetItemTypeResult
 {
-    public string Name { get; set; }
+    public required string Name { get; init; }
     public string? CategoryPath { get; init; }
 }
