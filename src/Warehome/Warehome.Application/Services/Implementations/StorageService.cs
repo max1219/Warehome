@@ -7,11 +7,13 @@ namespace Warehome.Application.Services.Implementations;
 
 public class StorageService(
     IStorageRepository storageRepository,
-    ICategoryRepository<Storage> storageCategoryRepository)
+    ICategoryRepository<Storage> storageCategoryRepository,
+    IItemStockRepository itemStockRepository)
     : IStorageService
 {
     private readonly IStorageRepository _storageRepository = storageRepository;
     private readonly ICategoryRepository<Storage> _storageCategoryRepository = storageCategoryRepository;
+    private readonly IItemStockRepository _itemStockRepository = itemStockRepository;
 
     public async Task<CreateStorageStatus> CreateStorageAsync(CreateStorageCommand command)
     {
@@ -53,6 +55,12 @@ public class StorageService(
         {
             return DeleteStorageStatus.NotFound;
         }
+
+        if (await _itemStockRepository.GetAllByStorageAsync(storage).AnyAsync())
+        {
+            return DeleteStorageStatus.NotEmpty;
+        }
+        
         await _storageRepository.DeleteAsync(storage);
         return DeleteStorageStatus.Success;
     }

@@ -7,11 +7,13 @@ namespace Warehome.Application.Services.Implementations;
 
 public class ItemTypeService(
     IItemTypeRepository itemTypeRepository,
-    ICategoryRepository<ItemType> categoryRepository)
+    ICategoryRepository<ItemType> categoryRepository,
+    IItemStockRepository stockRepository)
     : IItemTypeService
 {
     private readonly IItemTypeRepository _itemTypeRepository = itemTypeRepository;
     private readonly ICategoryRepository<ItemType> _categoryRepository = categoryRepository;
+    private readonly IItemStockRepository _stockRepository = stockRepository;
 
     public async Task<CreateItemTypeStatus> CreateItemTypeAsync(CreateItemTypeCommand command)
     {
@@ -48,12 +50,18 @@ public class ItemTypeService(
             }
         }
         
-        ItemType? storage = await _itemTypeRepository.GetAsync(command.Name, category);
-        if (storage == null)
+        ItemType? itemType = await _itemTypeRepository.GetAsync(command.Name, category);
+        if (itemType == null)
         {
             return DeleteItemTypeStatus.NotFound;
         }
-        await _itemTypeRepository.DeleteAsync(storage);
+
+        if (await _stockRepository.GetAllByTypeAsync(itemType).AnyAsync())
+        {
+            return DeleteItemTypeStatus.HasStock;
+        }
+        
+        await _itemTypeRepository.DeleteAsync(itemType);
         return DeleteItemTypeStatus.Success;
     }
 }

@@ -26,7 +26,10 @@ public class ItemTypeServiceTests
         mockCategoryRepo.Setup(x =>
                 x.CheckExistsAsync(It.IsAny<Category<ItemType>>()))
             .Verifiable(Times.Never);
-        ItemTypeService service = new ItemTypeService(mockItemTypeRepo.Object, mockCategoryRepo.Object);
+        Mock<IItemStockRepository> mockStockRepo = new Mock<IItemStockRepository>();
+        
+        ItemTypeService service = new ItemTypeService(
+            mockItemTypeRepo.Object, mockCategoryRepo.Object, mockStockRepo.Object);
 
         // Act
         CreateItemTypeStatus status =
@@ -58,7 +61,10 @@ public class ItemTypeServiceTests
             .ReturnsAsync(true)
             .Verifiable(Times.Once);
 
-        ItemTypeService service = new ItemTypeService(mockItemTypeRepo.Object, mockCategoryRepo.Object);
+        Mock<IItemStockRepository> mockStockRepo = new Mock<IItemStockRepository>();
+        
+        ItemTypeService service = new ItemTypeService(
+            mockItemTypeRepo.Object, mockCategoryRepo.Object, mockStockRepo.Object);
 
         // Act
         CreateItemTypeStatus status =
@@ -85,7 +91,10 @@ public class ItemTypeServiceTests
             .ReturnsAsync(new ItemType { Name = itemTypeName })
             .Verifiable(Times.Once);
         Mock<ICategoryRepository<ItemType>> mockCategoryRepo = new Mock<ICategoryRepository<ItemType>>();
-        ItemTypeService service = new ItemTypeService(mockItemTypeRepo.Object, mockCategoryRepo.Object);
+        Mock<IItemStockRepository> mockStockRepo = new Mock<IItemStockRepository>();
+        
+        ItemTypeService service = new ItemTypeService(
+            mockItemTypeRepo.Object, mockCategoryRepo.Object, mockStockRepo.Object);
 
         // Act
         CreateItemTypeStatus status =
@@ -111,7 +120,10 @@ public class ItemTypeServiceTests
                 x.CheckExistsAsync(It.Is<Category<ItemType>>(category => category.Path == categoryPath)))
             .ReturnsAsync(false);
 
-        ItemTypeService service = new ItemTypeService(mockItemTypeRepo.Object, mockCategoryRepo.Object);
+        Mock<IItemStockRepository> mockStockRepo = new Mock<IItemStockRepository>();
+        
+        ItemTypeService service = new ItemTypeService(
+            mockItemTypeRepo.Object, mockCategoryRepo.Object, mockStockRepo.Object);
 
         // Act
         CreateItemTypeStatus status =
@@ -134,7 +146,13 @@ public class ItemTypeServiceTests
             .Verifiable(Times.Once);
         Mock<ICategoryRepository<ItemType>> mockCategoryRepo = new Mock<ICategoryRepository<ItemType>>();
 
-        ItemTypeService service = new ItemTypeService(mockItemTypeRepo.Object, mockCategoryRepo.Object);
+        Mock<IItemStockRepository> mockStockRepo = new Mock<IItemStockRepository>();
+        mockStockRepo.Setup(x =>
+            x.GetAllByTypeAsync(It.Is<ItemType>(itemType => itemType.Name == itemTypeName)))
+            .Returns(Array.Empty<ItemStock>().ToAsyncEnumerable());
+        
+        ItemTypeService service = new ItemTypeService(
+            mockItemTypeRepo.Object, mockCategoryRepo.Object, mockStockRepo.Object);
 
         // Act
         DeleteItemTypeStatus status = await service.DeleteItemTypeAsync(new DeleteItemTypeCommand { Name = itemTypeName });
@@ -143,28 +161,60 @@ public class ItemTypeServiceTests
         mockItemTypeRepo.Verify();
         Assert.Equal(DeleteItemTypeStatus.Success, status);
     }
+    
+    [Fact]
+    public async Task Delete_HasStock()
+    {
+        // Arrange
+        string itemTypeName = "test";
+        Mock<IItemTypeRepository> mockItemTypeRepo = new Mock<IItemTypeRepository>();
+        mockItemTypeRepo.Setup(x => x.DeleteAsync(It.Is<ItemType>(itemType => itemType.Name == itemTypeName)))
+            .Verifiable(Times.Never);
+        mockItemTypeRepo.Setup(x => x.GetAsync(It.Is<string>(path => path == itemTypeName), null))
+            .ReturnsAsync(new ItemType { Name = itemTypeName })
+            .Verifiable(Times.Once);
+        Mock<ICategoryRepository<ItemType>> mockCategoryRepo = new Mock<ICategoryRepository<ItemType>>();
+
+        Mock<IItemStockRepository> mockStockRepo = new Mock<IItemStockRepository>();
+        mockStockRepo.Setup(x =>
+            x.GetAllByTypeAsync(It.Is<ItemType>(itemType => itemType.Name == itemTypeName)))
+            .Returns(new [] {new ItemStock()}.ToAsyncEnumerable());
+        
+        ItemTypeService service = new ItemTypeService(
+            mockItemTypeRepo.Object, mockCategoryRepo.Object, mockStockRepo.Object);
+
+        // Act
+        DeleteItemTypeStatus status = await service.DeleteItemTypeAsync(new DeleteItemTypeCommand { Name = itemTypeName });
+
+        // Assert
+        mockItemTypeRepo.Verify();
+        Assert.Equal(DeleteItemTypeStatus.HasStock, status);
+    }
 
     [Fact]
     public async Task Delete_NotExists_ReturnsNotFound()
     {
         // Arrange
         string itemTypeName = "test";
-        Mock<IItemTypeRepository> mockRepo = new Mock<IItemTypeRepository>();
-        mockRepo.Setup(x => x.DeleteAsync(It.IsAny<ItemType>()))
+        Mock<IItemTypeRepository> mockItemTypeRepo = new Mock<IItemTypeRepository>();
+        mockItemTypeRepo.Setup(x => x.DeleteAsync(It.IsAny<ItemType>()))
             .Verifiable(Times.Never);
-        mockRepo.Setup(x => x.GetAsync(It.Is<string>(path => path == itemTypeName), null))
+        mockItemTypeRepo.Setup(x => x.GetAsync(It.Is<string>(path => path == itemTypeName), null))
             .ReturnsAsync(value: null)
             .Verifiable(Times.Once);
 
         Mock<ICategoryRepository<ItemType>> mockCategoryRepo = new Mock<ICategoryRepository<ItemType>>();
 
-        ItemTypeService service = new ItemTypeService(mockRepo.Object, mockCategoryRepo.Object);
+        Mock<IItemStockRepository> mockStockRepo = new Mock<IItemStockRepository>();
+        
+        ItemTypeService service = new ItemTypeService(
+            mockItemTypeRepo.Object, mockCategoryRepo.Object, mockStockRepo.Object);
 
         // Act
         DeleteItemTypeStatus status = await service.DeleteItemTypeAsync(new DeleteItemTypeCommand { Name = itemTypeName });
 
         // Assert
-        mockRepo.Verify();
+        mockItemTypeRepo.Verify();
         Assert.Equal(DeleteItemTypeStatus.NotFound, status);
     }
 }

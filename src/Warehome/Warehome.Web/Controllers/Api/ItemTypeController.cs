@@ -48,6 +48,7 @@ public class ItemTypeController(IItemTypeService itemTypeService) : ControllerBa
         return status switch
         {
             DeleteItemTypeStatus.Success => Ok(DeleteItemTypeResponse.Success),
+            DeleteItemTypeStatus.HasStock => Conflict(DeleteItemTypeResponse.HasStock),
             DeleteItemTypeStatus.NotFound => NotFound(DeleteItemTypeResponse.NotFound),
             _ => throw new ArgumentOutOfRangeException()
         };

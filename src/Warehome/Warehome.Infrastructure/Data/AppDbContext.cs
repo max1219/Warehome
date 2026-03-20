@@ -10,11 +10,13 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     
     public DbSet<ItemType> ItemTypes => Set<ItemType>();
     public DbSet<ItemTypeCategory> ItemTypeCategories => Set<ItemTypeCategory>();
+    public DbSet<ItemStock> ItemStocks => Set<ItemStock>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         ConfigureStorageEntities(modelBuilder);
         ConfigureItemTypeEntities(modelBuilder);
+        ConfigureItemStockEntities(modelBuilder);
     }
 
     private static void ConfigureStorageEntities(ModelBuilder modelBuilder)
@@ -74,4 +76,21 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             .HasIndex(c => c.Path)
             .IsUnique();
     }
+
+    private void ConfigureItemStockEntities(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<ItemStock>()
+            .HasOne(s => s.ItemType)
+            .WithMany()
+            .HasForeignKey(s => s.ItemTypeId)
+            .OnDelete(DeleteBehavior.Restrict);
+        // todo: Убедиться, что создаются индексы
+        modelBuilder.Entity<ItemStock>()
+            .HasOne(s => s.Storage)
+            .WithMany()
+            .HasForeignKey(s => s.StorageId)
+            .OnDelete(DeleteBehavior.Restrict);
+        
+    }
+    
 }
