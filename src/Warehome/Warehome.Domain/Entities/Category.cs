@@ -2,7 +2,7 @@
 
 public class Category<T>
 {
-    public string Path { get; init; }
+    public required string Path { get; init; }
 
     public string Name
     {

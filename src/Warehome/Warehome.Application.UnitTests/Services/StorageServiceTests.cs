@@ -27,8 +27,8 @@ public class StorageServiceTests
                 x.CheckExistsAsync(It.IsAny<Category<Storage>>()))
             .Verifiable(Times.Never);
         Mock<IItemStockRepository> mockStockRepo = new Mock<IItemStockRepository>();
-        
-        StorageService service = 
+
+        StorageService service =
             new StorageService(mockStorageRepo.Object, mockCategoryRepo.Object, mockStockRepo.Object);
 
         // Act
@@ -61,8 +61,8 @@ public class StorageServiceTests
             .ReturnsAsync(true)
             .Verifiable(Times.Once);
         Mock<IItemStockRepository> mockStockRepo = new Mock<IItemStockRepository>();
-        
-        StorageService service = 
+
+        StorageService service =
             new StorageService(mockStorageRepo.Object, mockCategoryRepo.Object, mockStockRepo.Object);
 
         // Act
@@ -91,8 +91,8 @@ public class StorageServiceTests
             .Verifiable(Times.Once);
         Mock<ICategoryRepository<Storage>> mockCategoryRepo = new Mock<ICategoryRepository<Storage>>();
         Mock<IItemStockRepository> mockStockRepo = new Mock<IItemStockRepository>();
-        
-        StorageService service = 
+
+        StorageService service =
             new StorageService(mockStorageRepo.Object, mockCategoryRepo.Object, mockStockRepo.Object);
 
         // Act
@@ -112,20 +112,21 @@ public class StorageServiceTests
         string categoryPath = "testCategory/t1/t2/t3";
         Mock<IStorageRepository> mockStorageRepo = new Mock<IStorageRepository>();
         mockStorageRepo.Setup(x =>
-            x.AddAsync(It.IsAny<Storage>()))
+                x.AddAsync(It.IsAny<Storage>()))
             .Verifiable(Times.Never);
         Mock<ICategoryRepository<Storage>> mockCategoryRepo = new Mock<ICategoryRepository<Storage>>();
         mockCategoryRepo.Setup(x =>
                 x.CheckExistsAsync(It.Is<Category<Storage>>(category => category.Path == categoryPath)))
             .ReturnsAsync(false);
         Mock<IItemStockRepository> mockStockRepo = new Mock<IItemStockRepository>();
-        
-        StorageService service = 
+
+        StorageService service =
             new StorageService(mockStorageRepo.Object, mockCategoryRepo.Object, mockStockRepo.Object);
 
         // Act
         CreateStorageStatus status =
-            await service.CreateStorageAsync(new CreateStorageCommand { Name = storageName, CategoryPath = categoryPath });
+            await service.CreateStorageAsync(new CreateStorageCommand
+                { Name = storageName, CategoryPath = categoryPath });
 
         // Assert
         Assert.Equal(CreateStorageStatus.CategoryNotFound, status);
@@ -145,10 +146,10 @@ public class StorageServiceTests
         Mock<ICategoryRepository<Storage>> mockCategoryRepo = new Mock<ICategoryRepository<Storage>>();
         Mock<IItemStockRepository> mockStockRepo = new Mock<IItemStockRepository>();
         mockStockRepo.Setup(x =>
-            x.GetAllByStorageAsync(It.Is<Storage>(storage => storage.Name == storageName)))
+                x.GetAllByStorageAsync(It.Is<Storage>(storage => storage.Name == storageName)))
             .Returns(Array.Empty<ItemStock>().ToAsyncEnumerable());
-        
-        StorageService service = 
+
+        StorageService service =
             new StorageService(mockStorageRepo.Object, mockCategoryRepo.Object, mockStockRepo.Object);
 
         // Act
@@ -173,10 +174,10 @@ public class StorageServiceTests
         Mock<ICategoryRepository<Storage>> mockCategoryRepo = new Mock<ICategoryRepository<Storage>>();
         Mock<IItemStockRepository> mockStockRepo = new Mock<IItemStockRepository>();
         mockStockRepo.Setup(x =>
-            x.GetAllByStorageAsync(It.Is<Storage>(storage => storage.Name == storageName)))
-            .Returns(new [] {new ItemStock()}.ToAsyncEnumerable());
-        
-        StorageService service = 
+                x.GetAllByStorageAsync(It.Is<Storage>(storage => storage.Name == storageName)))
+            .Returns(new[] { new ItemStock { ItemType = null!, Quantity = 0, Storage = null! } }.ToAsyncEnumerable());
+
+        StorageService service =
             new StorageService(mockStorageRepo.Object, mockCategoryRepo.Object, mockStockRepo.Object);
 
         // Act
@@ -201,8 +202,8 @@ public class StorageServiceTests
 
         Mock<ICategoryRepository<Storage>> mockCategoryRepo = new Mock<ICategoryRepository<Storage>>();
         Mock<IItemStockRepository> mockStockRepo = new Mock<IItemStockRepository>();
-        
-        StorageService service = 
+
+        StorageService service =
             new StorageService(mockStorageRepo.Object, mockCategoryRepo.Object, mockStockRepo.Object);
 
         // Act

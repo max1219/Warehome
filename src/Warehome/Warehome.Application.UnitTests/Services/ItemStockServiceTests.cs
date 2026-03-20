@@ -192,7 +192,7 @@ public class ItemStockServiceTests
         Mock<IItemStockRepository> mockStockRepo = new Mock<IItemStockRepository>();
         mockStockRepo.Setup(x =>
                 x.GetByIdAsync(1))
-            .ReturnsAsync(new ItemStock { Id = id, Quantity = initialQuantity });
+            .ReturnsAsync(new ItemStock { Id = id, Quantity = initialQuantity, Storage = null!, ItemType = null!});
         mockStockRepo.Setup(x =>
                 x.UpdateAsync(It.Is<ItemStock>(s => s.Id == id && s.Quantity == newQuantity)))
             .Verifiable(Times.Once);
