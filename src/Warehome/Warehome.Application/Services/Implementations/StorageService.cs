@@ -49,10 +49,6 @@ public class StorageService : IStorageService
         if (command.CategoryPath is not null)
         {
             category = new Category<Storage> { Path = command.CategoryPath };
-            if (! await _storageCategoryRepository.CheckExistsAsync(category))
-            {
-                return DeleteStorageStatus.NotFound;
-            }
         }
         
         Storage? storage = await _storageRepository.GetAsync(command.Name, category);

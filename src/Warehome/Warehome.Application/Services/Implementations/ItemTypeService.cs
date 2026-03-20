@@ -49,10 +49,6 @@ public class ItemTypeService : IItemTypeService
         if (command.CategoryPath is not null)
         {
             category = new Category<ItemType> { Path = command.CategoryPath };
-            if (! await _categoryRepository.CheckExistsAsync(category))
-            {
-                return DeleteItemTypeStatus.NotFound;
-            }
         }
         
         ItemType? itemType = await _itemTypeRepository.GetAsync(command.Name, category);
