@@ -5,14 +5,20 @@ using Warehome.Domain.Entities;
 
 namespace Warehome.Application.Services.Implementations;
 
-public class ItemStockService(
-    IItemStockRepository stockRepository,
-    IItemTypeRepository itemTypeRepository,
-    IStorageRepository storageRepository) : IItemStockService
+public class ItemStockService : IItemStockService
 {
-    private readonly IItemStockRepository _stockRepository = stockRepository;
-    private readonly IItemTypeRepository _itemTypeRepository = itemTypeRepository;
-    private readonly IStorageRepository _storageRepository = storageRepository;
+    private readonly IItemStockRepository _stockRepository;
+    private readonly IItemTypeRepository _itemTypeRepository;
+    private readonly IStorageRepository _storageRepository;
+
+    public ItemStockService(IItemStockRepository stockRepository,
+        IItemTypeRepository itemTypeRepository,
+        IStorageRepository storageRepository)
+    {
+        _stockRepository = stockRepository;
+        _itemTypeRepository = itemTypeRepository;
+        _storageRepository = storageRepository;
+    }
 
     public async Task<CreateItemStockResult> CreateItemStockAsync(CreateItemStockCommand command)
     {

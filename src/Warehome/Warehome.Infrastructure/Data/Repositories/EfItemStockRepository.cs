@@ -8,9 +8,14 @@ using InfrastructureItemStock = Warehome.Infrastructure.Data.Entities.ItemStock;
 
 namespace Warehome.Infrastructure.Data.Repositories;
 
-public class EfItemStockRepository(AppDbContext context) : IItemStockRepository
+public class EfItemStockRepository : IItemStockRepository
 {
-    private readonly AppDbContext _context = context;
+    private readonly AppDbContext _context;
+
+    public EfItemStockRepository(AppDbContext context)
+    {
+        _context = context;
+    }
 
     public async Task<int> AddAsync(DomainItemStock item)
     {

@@ -5,15 +5,20 @@ using Warehome.Domain.Entities;
 
 namespace Warehome.Application.Services.Implementations;
 
-public class ItemTypeService(
-    IItemTypeRepository itemTypeRepository,
-    ICategoryRepository<ItemType> categoryRepository,
-    IItemStockRepository stockRepository)
-    : IItemTypeService
+public class ItemTypeService : IItemTypeService
 {
-    private readonly IItemTypeRepository _itemTypeRepository = itemTypeRepository;
-    private readonly ICategoryRepository<ItemType> _categoryRepository = categoryRepository;
-    private readonly IItemStockRepository _stockRepository = stockRepository;
+    private readonly IItemTypeRepository _itemTypeRepository;
+    private readonly ICategoryRepository<ItemType> _categoryRepository;
+    private readonly IItemStockRepository _stockRepository;
+
+    public ItemTypeService(IItemTypeRepository itemTypeRepository,
+        ICategoryRepository<ItemType> categoryRepository,
+        IItemStockRepository stockRepository)
+    {
+        _itemTypeRepository = itemTypeRepository;
+        _categoryRepository = categoryRepository;
+        _stockRepository = stockRepository;
+    }
 
     public async Task<CreateItemTypeStatus> CreateItemTypeAsync(CreateItemTypeCommand command)
     {

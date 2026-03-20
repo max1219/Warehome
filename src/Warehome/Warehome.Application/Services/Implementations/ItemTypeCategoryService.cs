@@ -5,13 +5,17 @@ using Warehome.Domain.Entities;
 
 namespace Warehome.Application.Services.Implementations;
 
-public class ItemTypeCategoryService(
-    ICategoryRepository<ItemType> itemTypeCategoryRepository,
-    IItemTypeRepository itemTypeRepository)
-    : IItemTypeCategoryService
+public class ItemTypeCategoryService : IItemTypeCategoryService
 {
-    private readonly IItemTypeRepository _itemTypeRepository = itemTypeRepository;
-    private readonly ICategoryRepository<ItemType> _itemTypeCategoryRepository = itemTypeCategoryRepository;
+    private readonly IItemTypeRepository _itemTypeRepository;
+    private readonly ICategoryRepository<ItemType> _itemTypeCategoryRepository;
+
+    public ItemTypeCategoryService(ICategoryRepository<ItemType> itemTypeCategoryRepository,
+        IItemTypeRepository itemTypeRepository)
+    {
+        _itemTypeRepository = itemTypeRepository;
+        _itemTypeCategoryRepository = itemTypeCategoryRepository;
+    }
 
     public async Task<GetItemTypeCategoryTreeResult> GetTreeAsync()
     {

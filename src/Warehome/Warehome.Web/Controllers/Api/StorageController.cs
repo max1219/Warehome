@@ -10,9 +10,14 @@ namespace Warehome.Web.Controllers.Api;
 
 [ApiController]
 [Route("api/storages")]
-public class StorageController(IStorageService storageService) : ControllerBase
+public class StorageController : ControllerBase
 {
-    private readonly IStorageService _storageService = storageService;
+    private readonly IStorageService _storageService;
+
+    public StorageController(IStorageService storageService)
+    {
+        _storageService = storageService;
+    }
 
     [HttpPost]
     public async Task<ActionResult<CreateStorageResponse>> Post(

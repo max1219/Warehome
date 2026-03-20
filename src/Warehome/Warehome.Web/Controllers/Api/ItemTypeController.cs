@@ -10,9 +10,14 @@ namespace Warehome.Web.Controllers.Api;
 
 [ApiController]
 [Route("api/item-types")]
-public class ItemTypeController(IItemTypeService itemTypeService) : ControllerBase
+public class ItemTypeController : ControllerBase
 {
-    private readonly IItemTypeService _itemTypeService = itemTypeService;
+    private readonly IItemTypeService _itemTypeService;
+
+    public ItemTypeController(IItemTypeService itemTypeService)
+    {
+        _itemTypeService = itemTypeService;
+    }
 
     [HttpPost]
     public async Task<ActionResult<CreateItemTypeResponse>> Post(

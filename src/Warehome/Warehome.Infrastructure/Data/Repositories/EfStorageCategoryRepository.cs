@@ -6,9 +6,14 @@ using Storage = Warehome.Domain.Entities.Storage;
 
 namespace Warehome.Infrastructure.Data.Repositories;
 
-public class EfStorageCategoryRepository(AppDbContext context) : ICategoryRepository<Storage>
+public class EfStorageCategoryRepository : ICategoryRepository<Storage>
 {
-    private readonly AppDbContext _context = context;
+    private readonly AppDbContext _context;
+
+    public EfStorageCategoryRepository(AppDbContext context)
+    {
+        _context = context;
+    }
 
     public Task<bool> CheckExistsAsync(Category<Storage> category)
     {

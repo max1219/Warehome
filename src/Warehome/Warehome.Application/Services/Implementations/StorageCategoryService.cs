@@ -5,13 +5,17 @@ using Warehome.Domain.Entities;
 
 namespace Warehome.Application.Services.Implementations;
 
-public class StorageCategoryService(
-    ICategoryRepository<Storage> storageCategoryRepository,
-    IStorageRepository storageRepository)
-    : IStorageCategoryService
+public class StorageCategoryService : IStorageCategoryService
 {
-    private readonly IStorageRepository _storageRepository = storageRepository;
-    private readonly ICategoryRepository<Storage> _storageCategoryRepository = storageCategoryRepository;
+    private readonly IStorageRepository _storageRepository;
+    private readonly ICategoryRepository<Storage> _storageCategoryRepository;
+
+    public StorageCategoryService(ICategoryRepository<Storage> storageCategoryRepository,
+        IStorageRepository storageRepository)
+    {
+        _storageRepository = storageRepository;
+        _storageCategoryRepository = storageCategoryRepository;
+    }
 
     public async Task<GetStorageCategoryTreeResult> GetTreeAsync()
     {

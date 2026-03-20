@@ -7,9 +7,14 @@ using InfrastructureItemType = Warehome.Infrastructure.Data.Entities.ItemType;
 
 namespace Warehome.Infrastructure.Data.Repositories;
 
-public class EfItemTypeRepository(AppDbContext context) : IItemTypeRepository
+public class EfItemTypeRepository : IItemTypeRepository
 {
-    private readonly AppDbContext _context = context;
+    private readonly AppDbContext _context;
+
+    public EfItemTypeRepository(AppDbContext context)
+    {
+        _context = context;
+    }
 
     public async Task<bool> CheckExistsAsync(DomainItemType itemType)
     {

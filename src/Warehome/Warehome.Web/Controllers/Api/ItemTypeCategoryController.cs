@@ -9,9 +9,14 @@ namespace Warehome.Web.Controllers.Api;
 
 [ApiController]
 [Route("api/item-type-categories")]
-public class ItemTypeCategoryController(IItemTypeCategoryService itemTypeCategoryService) : ControllerBase
+public class ItemTypeCategoryController : ControllerBase
 {
-    private readonly IItemTypeCategoryService _itemTypeCategoryService = itemTypeCategoryService;
+    private readonly IItemTypeCategoryService _itemTypeCategoryService;
+
+    public ItemTypeCategoryController(IItemTypeCategoryService itemTypeCategoryService)
+    {
+        _itemTypeCategoryService = itemTypeCategoryService;
+    }
 
     [HttpGet("tree")]
     public async Task<ActionResult<GetItemTypeCategoryTreeResponse>> GetTree()

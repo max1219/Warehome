@@ -8,9 +8,14 @@ namespace Warehome.Web.Controllers.Api;
 
 [ApiController]
 [Route("api/item-stocks")]
-public class ItemStockController(IItemStockService itemStockService) : ControllerBase
+public class ItemStockController : ControllerBase
 {
-    private readonly IItemStockService _itemStockService = itemStockService;
+    private readonly IItemStockService _itemStockService;
+
+    public ItemStockController(IItemStockService itemStockService)
+    {
+        _itemStockService = itemStockService;
+    }
 
     [HttpPost]
     public async Task<ActionResult<CreateItemStockResponse>> Post([FromBody] CreateItemStockRequest request)

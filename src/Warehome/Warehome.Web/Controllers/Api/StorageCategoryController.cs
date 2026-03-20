@@ -9,9 +9,14 @@ namespace Warehome.Web.Controllers.Api;
 
 [ApiController]
 [Route("api/storage-categories")]
-public class StorageCategoryController(IStorageCategoryService storageCategoryService) : ControllerBase
+public class StorageCategoryController : ControllerBase
 {
-    private readonly IStorageCategoryService _storageCategoryService = storageCategoryService;
+    private readonly IStorageCategoryService _storageCategoryService;
+
+    public StorageCategoryController(IStorageCategoryService storageCategoryService)
+    {
+        _storageCategoryService = storageCategoryService;
+    }
 
     [HttpGet("tree")]
     public async Task<ActionResult<GetStorageCategoryTreeResponse>> GetTree()

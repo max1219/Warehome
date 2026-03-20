@@ -3,8 +3,12 @@ using Warehome.Infrastructure.Data.Entities;
 
 namespace Warehome.Infrastructure.Data;
 
-public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
+public class AppDbContext : DbContext
 {
+    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
+    {
+    }
+
     public DbSet<Storage> Storages => Set<Storage>();
     public DbSet<StorageCategory> StorageCategories => Set<StorageCategory>();
     

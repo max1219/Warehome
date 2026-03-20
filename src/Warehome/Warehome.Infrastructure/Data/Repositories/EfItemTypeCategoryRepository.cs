@@ -6,9 +6,14 @@ using ItemType = Warehome.Domain.Entities.ItemType;
 
 namespace Warehome.Infrastructure.Data.Repositories;
 
-public class EfItemTypeCategoryRepository(AppDbContext context) : ICategoryRepository<ItemType>
+public class EfItemTypeCategoryRepository : ICategoryRepository<ItemType>
 {
-    private readonly AppDbContext _context = context;
+    private readonly AppDbContext _context;
+
+    public EfItemTypeCategoryRepository(AppDbContext context)
+    {
+        _context = context;
+    }
 
     public Task<bool> CheckExistsAsync(Category<ItemType> category)
     {

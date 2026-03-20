@@ -5,15 +5,20 @@ using Warehome.Domain.Entities;
 
 namespace Warehome.Application.Services.Implementations;
 
-public class StorageService(
-    IStorageRepository storageRepository,
-    ICategoryRepository<Storage> storageCategoryRepository,
-    IItemStockRepository itemStockRepository)
-    : IStorageService
+public class StorageService : IStorageService
 {
-    private readonly IStorageRepository _storageRepository = storageRepository;
-    private readonly ICategoryRepository<Storage> _storageCategoryRepository = storageCategoryRepository;
-    private readonly IItemStockRepository _itemStockRepository = itemStockRepository;
+    private readonly IStorageRepository _storageRepository;
+    private readonly ICategoryRepository<Storage> _storageCategoryRepository;
+    private readonly IItemStockRepository _itemStockRepository;
+
+    public StorageService(IStorageRepository storageRepository,
+        ICategoryRepository<Storage> storageCategoryRepository,
+        IItemStockRepository itemStockRepository)
+    {
+        _storageRepository = storageRepository;
+        _storageCategoryRepository = storageCategoryRepository;
+        _itemStockRepository = itemStockRepository;
+    }
 
     public async Task<CreateStorageStatus> CreateStorageAsync(CreateStorageCommand command)
     {

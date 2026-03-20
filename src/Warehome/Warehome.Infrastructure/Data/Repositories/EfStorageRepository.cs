@@ -7,9 +7,14 @@ using InfrastructureStorage = Warehome.Infrastructure.Data.Entities.Storage;
 
 namespace Warehome.Infrastructure.Data.Repositories;
 
-public class EfStorageRepository(AppDbContext context) : IStorageRepository
+public class EfStorageRepository : IStorageRepository
 {
-    private readonly AppDbContext _context = context;
+    private readonly AppDbContext _context;
+
+    public EfStorageRepository(AppDbContext context)
+    {
+        _context = context;
+    }
 
     public async Task<bool> CheckExistsAsync(DomainStorage storage)
     {
